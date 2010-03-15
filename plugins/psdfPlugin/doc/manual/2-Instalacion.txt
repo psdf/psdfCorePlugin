@@ -1,0 +1,114 @@
+# Instalacion
+
+Este tutorial de instalacion esta basado en el propuesto por Symfony y extendido a 
+la Suite PSDF.
+
+## Pre requisitos.
+
+Primero que nada, asegúrate de que cuentas con un entorno de desarrollo web funcionando: 
+un servidor web (Apache por ejemplo), un motor de bases de datos (PostgreSQL, MySQL, 
+o SQLite), y PHP 5.2.4 o superior. 
+
+Como utilizaremos la línea de comandos constantemente, es preferible utilizar un sistema 
+operativo tipo Unix, si utilizas Windows, va a funcionar de todas formas, simplemente 
+vas a tener que ingresar comandos en la consola cmd.
+
+La suite PSDF utiliza librerias y funcionalidades de Symfony 1.2 pero ya incluidas asi 
+que no necesitarás instalarlas manualmente.
+
+## Instalación de la Suite PSDF
+
+Primero descomprime el archivo de instalación en un directorio determinado y renombralo 
+con el nombre del proyecto en cuestión. Aquí lo llamaremos miproyecto:
+
+    > cd /var/www
+    > tar zxpf psdf_x.x.x.tgz
+    > mv psdf_x.x.x miproyecto
+    > cd miproyecto
+
+Como las configuraciones PHP varían mucho de una distribución a otra, tenemos que 
+comprobar que tu configuración PHP cumple los requisitos mínimos de Symfony y la Suite 
+PSDF. Inicia el script de comprobación de la configuración que viene con Symfony y 
+extendido a la Suite PSDF desde la línea de comandos:
+
+    > php data/bin/check_configuration.php
+
+Si hay un problema, la salida te dará consejos sobre cómo solucionarlo. También debes 
+ejecutar el script desde un navegador ya que la configuración PHP puede ser diferente. 
+Accede al archivo que esta en el directorio web. No te olvides de quitar el archivo del 
+directorio raíz web después:
+
+    > rm web/check_configuration.php
+
+Si el script no muestra ningún error, puedes comprobar que Symfony funciona 
+correctamente usando la línea de comandos para mostrar la versión (nota la letra V 
+mayúscula):
+
+    > php lib/vendor/symfony/data/bin/symfony -V
+    
+## La Base De Datos
+
+El paso siguiente es crear la base de datos. La Suite PSDF a travez de Doctrine soporta
+todas las Base De Datos soportadas por PDO (PostgreSQL, MySQL, SQLite, Oracle, MSSQL, ...). 
+PDO es la capa de abstracción de base de datos que viene con PHP.
+
+Vamos a usar Postgres. Desde la consola crearemos el usuario *psdfusr* y la base datos 
+*psdfdb*. El usuario solo tendrá los privilegios de crear base de datos pero no otros 
+usuario (Asumimos que manager es el usuario administrador actual de postgres).
+
+Creamos el usuario:
+
+    > createuser -A -d -P -h localhost -U manager psdfusr
+    Ingrese la contraseña para el nuevo rol: xxxx
+    Ingrésela nuevamente: xxxx
+    Debe permitírsele al rol la creacion de otros roles? (s/n): n
+
+Nos conectamos con el nuevo usuario:
+
+    > psql -h localhost -U psdfusr template1 -W 
+
+Creamos la base de datos:
+
+    > template1=> CREATE DATABASE psdfdb;
+
+Nos reconectamos a esa base especificamente:
+
+    > template1=> \q
+    > psql -h localhost -U psdfusr -W -d psdfdb
+
+Creamos esquemas iniciales necesarios (paso provisorio):
+
+    > psdfdb=> CREATE SCHEMA psdform AUTHORIZATION psdfusr;
+    > psdfdb=> CREATE SCHEMA psdforg AUTHORIZATION psdfusr;
+    > psdfdb=> CREATE SCHEMA psdfwf AUTHORIZATION psdfusr;
+
+Nos desconectamos:
+
+    > psdfdb=> \q
+    
+## El ORM
+
+Tenemos que decirle a Symfony el host, base de datos y usuario que vamos a usar para 
+el proyecto, para eso editamos el archivo *config/databases.yml*:
+
+    all:
+      psdf:
+        class: sfDoctrineDatabase
+        param:
+          dsn:      pgsql:host=localhost;dbname=psdfdb
+          username: psdfusr
+          password: xxxx
+
+Por ultimo, utilizaremos algunas de las tareas de Doctrine para generar tablas y datos iniciales:
+
+    > php symfony doctrine:build-all
+
+## Acceder a la Suite desde el navegador web
+
+Aquí depende de la configuracion del apache. 
+
+Si se configuró un servidor virtual: *http://miproyecto.localhost*
+
+o de la manera convencional (no recomendada): *http://localhost/miproyecto/web/index.php*
+
+![Alt text](/psdfPlugin/images/manpsdf01.png)

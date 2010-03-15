@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xpdl2:Package xmlns:xpdExt="http://www.tibco.com/XPD/xpdExtension1.0.0" xmlns:xpdl2="http://www.wfmc.org/2008/XPDL2.1" Id="##PACKAGE_ID##" xpdExt:DisplayName="##PACKAGE_DISPLAY_NAME##" Name="##PACKAGE_NAME##">
+  <xpdl2:PackageHeader xpdExt:Language="es_AR">
+    <xpdl2:XPDLVersion>2.1</xpdl2:XPDLVersion>
+    <xpdl2:Vendor>TIBCO</xpdl2:Vendor>
+    <xpdl2:Created>##PACKAGE_DATE##</xpdl2:Created>
+    <xpdl2:Description></xpdl2:Description>
+    <xpdl2:Documentation></xpdl2:Documentation>
+    <xpdl2:CostUnit>ARS</xpdl2:CostUnit>
+  </xpdl2:PackageHeader>
+  <xpdl2:RedefinableHeader PublicationStatus="UNDER_REVISION">
+    <xpdl2:Author>##PACKAGE_AUTHOR##</xpdl2:Author>
+    <xpdl2:Version>##PACKAGE_VERSION##</xpdl2:Version>
+  </xpdl2:RedefinableHeader>
+  <xpdl2:ExtendedAttributes>
+    <xpdl2:ExtendedAttribute Name="CreatedBy" Value="TIBCO Business Studio"/>
+    <xpdl2:ExtendedAttribute Name="FormatVersion" Value="6"/>
+  </xpdl2:ExtendedAttributes>  
+</xpdl2:Package>

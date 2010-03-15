@@ -1,0 +1,20 @@
+connection: psdf
+
+Organizacion:
+  tableName: psdforg.organizacion
+  columns:
+    nombre:             { type: string(30), notnull: true, unique: true }
+
+Unidadorg:
+  tableName: psdforg.unidadorg
+  columns:
+    nombre:             { type: string(30), notnull: true, unique: true }
+    rel_organizacion:   { type: integer }
+  relations:
+    Organizacion:       { foreignAlias: Unidadorgs, local: rel_organizacion, foreign: id, type: one, foreignType: many }
+
+Usuario:
+  tableName: psdforg.usuario
+  columns:
+    nombre:             { type: string(30), notnull: true, unique: true }
+    pass:               { type: string(30), notnull: true, unique: true }    

@@ -1,0 +1,51 @@
+# Paquetes y Procesos
+
+El proceso pasa por una serie de pasos o etapas (un proceso, bien dicho) desde el
+momento en que es concebido y hasta llegar a su ejecución. Un proceso debe ser:
+
+*    Creado
+*    Modelado/Diseñado (con una herramienta en notacion BPM exportando e importando)
+*    Construido
+*    Publicado
+*    Ejecutado
+
+## Creando Paquetes y Procesos
+
+Los Paquetes y Procesos hoy se crean desde los modulos *psdfPaquete* y
+*psdfProceso*, respectivamente.
+
+## Diseñando los procesos
+
+...
+
+## Convenciones en la definicion de datafields de paquetes y procesos en XPDL.
+
+...
+
+## Definiendo el uso de un patron en una tarea:
+
+    NombrePatron:
+      Params:
+        in_param1:  ValorParam1
+        in_param2:  ValorParam2
+        out_param3: ValorParam3
+
+Los valores puden ser:
+
+Numerico o alfanumerico, representados como tal, por ej.:
+
+*   1234
+*   'un texto'
+
+Datafield (variable del flujo del proceso), representado por su nombre:
+
+*   procCantidad
+*   packEntidad
+
+Variable de entorno, representado con carácter inicial %:
+
+*   %idUsuario
+*   %puesto
+
+La notacion utilizada es YML, deben seguirse sus principios y reglas para que
+este bien formado y sea valido.

@@ -1,0 +1,29 @@
+generator:
+  class: sfDoctrineGenerator
+  param:
+    model_class:           Paquete
+    theme:                 admin
+    non_verbose_templates: true
+    with_show:             false
+    singular:              ~
+    plural:                ~
+    route_prefix:          paquete_paquete
+    with_doctrine_route:     1
+
+    config:
+      actions: ~
+      fields: ~  
+      list:
+        fields:  
+          nombreMacroPaquete: { label: Macro }
+        display:          [organizacion, nombreMacroPaquete, nombre]
+        object_actions:
+          _edit:          ~
+          _delete:        ~
+          xpdlexp:       { label: Exportar, action: xpdlexp }
+          xpdlimp:         { label: Importar, action: xpdlimp }
+      filter:  ~
+      form:    
+        display:          [rel_organizacion, rel_paquete, nombre]
+      edit:    ~
+      new:     ~

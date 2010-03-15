@@ -1,0 +1,40 @@
+nodos:
+  estilo: ~
+  nodo:
+    etiqueta: ~
+    contenido: ~
+    link: { proceso: ~, params: ~ }
+  nodo:
+    etiqueta: ~
+    contenido: "Moodle is a real gift to forward thinking educators!" 
+    nodos:
+      estilo: list
+      nodo:     
+        clase: Proceso            
+        etiqueta: getNombre
+        contenido: getDescripcion
+        filtro: getByUsuario()         
+        link: { proceso: elproceso, params: ~ }
+      nodo:
+        etiqueta: ~
+        contenido: ~
+  nodo:
+    etiqueta: Welcome to the Moodle Service Network!
+    contenido: Moodle is a course management system designed to help educators who want to create 
+               quality online courses. The software is used all over the world by universities, 
+               schools, companies and independent teachers. Moodle is open source and completely 
+               free to use.
+               The Moodle Partners are a group of service companies guided by the core developers 
+               of Moodle. We provide a range of optional commercial services for Moodle users, 
+               including fully-serviced Moodle hosting, remote support contracts, custom code 
+               development and consulting. Our customers range from individual educators up to 
+               company training departments and universities.
+               Please explore our range of friendly support services using the links on the left, 
+               and help Moodle support you by supporting the developers!
+    nodos:
+      nodo:
+        etiqueta: ~
+        contenido: is our community site (made with Moodle) where you'll find information, free 
+                   downloads and detailed community discussions about installing, using and 
+                   extending Moodle.
+                   

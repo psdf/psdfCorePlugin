@@ -1,0 +1,7 @@
+Este ejemplo debe ponerse dentro de la carpeta "examples", quedando de la siguiente manera:
+
+{ CARPETA_EXTJS }/examples/EditorGridPanel por garraS/
+
+garraS
+
+email: garraS@extjs.es

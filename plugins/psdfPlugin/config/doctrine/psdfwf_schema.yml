@@ -1,0 +1,83 @@
+
+connection: psdf
+
+Paquete:
+  tableName: psdfwf.paquete
+  columns:
+    nombre:             { type: string(30), notnull: true, unique: true }
+    xpdl:               { type: string }
+    rel_organizacion:   { type: integer }
+    rel_paquete:        { type: integer }
+  relations:
+    Organizacion:       { foreignAlias: Paquetes, local: rel_organizacion, foreign: id, type: one, foreignType: many }
+    Paquete:            { foreignAlias: Paquetes2, local: rel_paquete, foreign: id, type: one, foreignType: many }
+
+Proceso:
+  tableName: psdfwf.proceso
+  columns:
+    nombre:             { type: string(30), notnull: true, unique: true }    
+    rel_paquete:        { type: integer }
+    imagen:             { type: string(30) }
+  relations:
+    Paquete:            { foreignAlias: Procesos, local: rel_paquete, foreign: id, type: one, foreignType: many }
+
+Picture:
+  tableName: psdfwf.picture
+  columns:
+    nombre:             { type: string(30), notnull: true, unique: true }
+    rel_paquete:        { type: integer }
+  relations:
+    Paquete:            { foreignAlias: Pictures, local: rel_paquete, foreign: id, type: one, foreignType: many }
+
+Coordenada:
+  tableName: psdfwf.coordenada
+  columns:
+    nombre:             { type: string(30), notnull: true, unique: true }
+    pxtop:                { type: integer }    
+    pxleft:               { type: integer }
+    rel_picture:        { type: integer }
+    rel_proceso:        { type: integer }
+  relations:
+    Picture:            { foreignAlias: Coordenadas, local: rel_picture, foreign: id, type: one, foreignType: many }
+    Proceso:            { foreignAlias: Coordenadas2, local: rel_proceso, foreign: id, type: one, foreignType: one }
+
+EstadoFlow:
+  tableName: psdfwf.estado_flow
+  columns:
+    nombre:             { type: string(30), notnull: true, unique: true }
+    descripcion:        { type: string(100) }
+    
+Flow:
+  tableName: psdfwf.flow
+  columns:
+    datafields:         { type: string }
+    rel_estado:         { type: integer }
+    rel_proceso:        { type: integer }
+  relations:
+    Proceso:            { foreignAlias: Flow, local: rel_proceso, foreign: id, type: one, foreignType: many }
+    Estado:             { foreignAlias: Flow1, local: rel_estado, foreign: id, type: one, foreignType: one }
+
+FlowDet:
+  tableName: psdfwf.flow_det
+  columns:
+    activity_id:        { type: string(30), notnull: true }
+    rel_estado:         { type: integer }
+    rel_flow:           { type: integer }
+    rel_usuario:        { type: integer }
+    tstart:             { type: time }
+    tend:               { type: time }
+  relations:
+    Estado:             { foreignAlias: FlowDet, local: rel_estado, foreign: id, type: one, foreignType: one }
+    Flow:               { foreignAlias: FlowDet1, local: rel_flow, foreign: id, type: one, foreignType: many }
+    Usuario:            { foreignAlias: FlowDet2, local: rel_usuario, foreign: id, type: one, foreignType: many }
+
+Activity:
+  tableName: psdfwf.activity
+  columns:
+    
+Catalogo:
+  tableName: psdfwf.catalogo
+  columns:
+    nombre:             { type: string(30), notnull: true, unique: true }
+    definicion:         { type: string }
+

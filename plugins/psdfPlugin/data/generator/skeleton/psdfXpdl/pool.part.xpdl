@@ -1,0 +1,12 @@
+<xpdl2:Pool Id="##POOL_ID##" xpdExt:DisplayName="##POOL_DISPLAY_NAME##" Name="##POOL_NAME##" BoundaryVisible="true" Process="##PROCESS_ID##">
+  <xpdl2:Lanes>
+    <xpdl2:Lane Id="##LANE_ID##" xpdExt:DisplayName="##LANE_DISPLAY_NAME##" Name="##LANE_NAME##">
+      <xpdl2:NodeGraphicsInfos>
+	<xpdl2:NodeGraphicsInfo Height="314.0"/>
+      </xpdl2:NodeGraphicsInfos>
+    </xpdl2:Lane>
+  </xpdl2:Lanes>
+  <xpdl2:NodeGraphicsInfos>
+    <xpdl2:NodeGraphicsInfo BorderColor="0,0,128" FillColor="223,179,0" IsVisible="true"/>
+  </xpdl2:NodeGraphicsInfos>
+</xpdl2:Pool>

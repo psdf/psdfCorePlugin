@@ -1,0 +1,7 @@
+all:
+  psdf:
+    class: sfDoctrineDatabase
+    param:
+      dsn:      pgsql:host=localhost;dbname=psdf
+      username: desa
+      password: desa

@@ -1,0 +1,64 @@
+# Modificacion ejemplo
+
+organizacion_organizacion:
+  class: sfDoctrineRouteCollection
+  options:
+    model:                Organizacion
+    module:               psdfOrganizacion
+    prefix_path:          psdfOrganizacion
+    column:               id
+    with_wildcard_routes: true
+
+paquete_paquete:
+  class: sfDoctrineRouteCollection
+  options:
+    model:                Paquete
+    module:               psdfPaquete
+    prefix_path:          psdfPaquete
+    column:               id
+    with_wildcard_routes: true
+
+proceso:
+  class: sfDoctrineRouteCollection
+  options:
+    model:                Proceso
+    module:               psdfProceso
+    prefix_path:          psdfProceso
+    column:               id
+    with_wildcard_routes: true
+
+catalogo_psdfCatalogo:
+  class: sfDoctrineRouteCollection
+  options:
+    model:                Catalogo
+    module:               psdfCatalogo
+    prefix_path:          psdfCatalogo
+    column:               id
+    with_wildcard_routes: true
+
+patron_psdfPatron:
+  class: sfDoctrineRouteCollection
+  options:
+    model:                Patron
+    module:               psdfPatron
+    prefix_path:          psdfPatron
+    column:               id
+    with_wildcard_routes: true
+
+coordenada_coordenada:
+  class: sfDoctrineRouteCollection
+  options:
+    model:                Coordenada
+    module:               psdfCoordenada
+    prefix_path:          psdfCoordenada
+    column:               id
+    with_wildcard_routes: true
+
+picture_picture:
+  class: sfDoctrineRouteCollection
+  options:
+    model:                Picture
+    module:               psdfPicture
+    prefix_path:          psdfPicture
+    column:               id
+    with_wildcard_routes: true
