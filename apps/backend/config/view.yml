@@ -12,9 +12,9 @@ default:
     #language:     en
     #robots:       index, follow
 
-  stylesheets:    [main.css]
+  stylesheets:    [ main.css ]
 
-  javascripts:    []
+  javascripts:    [ ext-js/adapter/ext/ext-base.js, ext-js/ext-all ]
 
   has_layout:     true
   layout:         layout
