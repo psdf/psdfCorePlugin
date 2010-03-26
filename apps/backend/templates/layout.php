@@ -9,11 +9,13 @@
     <?php include_javascripts() ?>
 
     <?php //echo stylesheet_tag('../js/ext-js/tutorial/ExtStart') ?>
-	<?php echo stylesheet_tag('../js/ext-js/resources/css/ext-all.css') ?>
-	<?php echo stylesheet_tag('../js/ext-js/resources/css/xtheme-gray') ?>
-
-	<?php echo javascript_include_tag('ext-js/adapter/ext/ext-base') ?>
-	<?php echo javascript_include_tag('ext-js/ext-all') ?>
+	<?php echo stylesheet_tag(sfConfig::get('psdf_web_url').'/js/ext-js/resources/css/ext-all') ?>
+	<?php echo stylesheet_tag(sfConfig::get('psdf_web_url').'/js/ext-js/resources/css/xtheme-blue') ?>
+        <?php echo stylesheet_tag(sfConfig::get('psdf_web_url').'/sfDoctrinePlugin/css/global') ?>
+        <?php echo stylesheet_tag(sfConfig::get('psdf_web_url').'/sfDoctrinePlugin/css/default') ?>
+	<?php //echo javascript_include_tag('ext-js/adapter/ext/ext-base') ?>
+	<?php //echo javascript_include_tag('ext-js/ext-all') ?>
+        <?php echo javascript_include_tag(sfConfig::get('psdf_web_url').'/psdfPlugin/js/psdf_util.js') ?>
 
   </head>
   <body>
