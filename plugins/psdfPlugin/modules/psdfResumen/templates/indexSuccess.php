@@ -29,6 +29,12 @@
                     //echo select_tag('proceso[id]', objects_for_select($procList, 'getId', 'getNombreConPaquete') )
                     //echo $listaProc->render('proceso');
                     ?>
+                    <select id="proceso[id]" name="proceso[id]">
+                        <?php foreach($procList as $proc){ ?>
+                        <option value="<?php echo $proc->getId() ?>"><?php echo $proc->getNombreConPaquete()  ?></option>
+                        <?php } ?>
+                    </select>
+
                 </div>
             </div>
         </fieldset>
@@ -51,7 +57,7 @@
                     <label for="macro_nombre">Proceso</label>
                     <?php
                     //echo select_tag('proceso[id]', objects_for_select($procList, 'getId', 'getNombreConPaquete') )
-                    //echo $listaProc->render('proceso');
+                    echo $listaProc->render('proceso');
                     ?>
                 </div>
             </div>
