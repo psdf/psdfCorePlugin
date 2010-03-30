@@ -65,7 +65,6 @@
     </div>
 </div>
 
-<h2>- <?php echo link_to('Manual PSDF', 'psdfManual/index') ?></h2>
 <script type="text/javascript">
     toogleStatus('divConstruir');
     toogleStatus('divEjecutar');
