@@ -75,6 +75,7 @@ abstract class PluginPaquete extends BasePaquete
       $arguments['process_id'] = $procesoXpdlId;
       $arguments['process_name'] = $procesoXpdlName;
       $arguments['process_display_name'] = $procesoXpdlDisplayName;
+      $options = array();
       $gxp = new psdfGenerateXpdlProcess();
       $contentProc = $gxp->execute($arguments, $options);
 
