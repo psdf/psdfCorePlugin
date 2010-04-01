@@ -16,7 +16,8 @@ generator:
       list:
         fields:  
           nombreMacroPaquete: { label: Macro }
-        display:          [organizacion, nombreMacroPaquete, nombre]
+        sort:             [nombre, desc]
+        display:          [organizacion, nombreMacroPaquete, nombre]        
         object_actions:
           _edit:          ~
           _delete:        ~

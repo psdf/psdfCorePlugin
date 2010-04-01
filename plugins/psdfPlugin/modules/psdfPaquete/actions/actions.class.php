@@ -1,7 +1,7 @@
 <?php
 
-require_once dirname(__FILE__).'/../lib/paqueteGeneratorConfiguration.class.php';
-require_once dirname(__FILE__).'/../lib/paqueteGeneratorHelper.class.php';
+require_once dirname(__FILE__).'/../lib/psdfPaqueteGeneratorConfiguration.class.php';
+require_once dirname(__FILE__).'/../lib/psdfPaqueteGeneratorHelper.class.php';
 
 /**
  * paquete actions.
