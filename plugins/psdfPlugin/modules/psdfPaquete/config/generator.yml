@@ -12,7 +12,9 @@ generator:
 
     config:
       actions: ~
-      fields: ~
+      fields:
+        rel_organizacion: { label: Organizacion }
+        rel_paquete:    { label: Macro }
       list:
         fields:
           nombreMacroPaquete: { label: Macro }
@@ -21,8 +23,9 @@ generator:
         object_actions:
           _edit:          ~
           _delete:        ~
-          xpdlexp:       { label: Exportar, action: xpdlexp }
-      filter:  ~
+          xpdlexp:        { label: Exportar, action: xpdlexp }
+      filter:
+        display:          [rel_organizacion, rel_paquete, nombre]
       form:
         display:          [rel_organizacion, rel_paquete, nombre, xpdl]
       edit:    ~
