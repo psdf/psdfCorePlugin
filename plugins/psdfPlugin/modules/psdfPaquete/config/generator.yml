@@ -12,19 +12,18 @@ generator:
 
     config:
       actions: ~
-      fields: ~  
+      fields: ~
       list:
-        fields:  
+        fields:
           nombreMacroPaquete: { label: Macro }
         sort:             [nombre, desc]
-        display:          [organizacion, nombreMacroPaquete, nombre]        
+        display:          [organizacion, nombreMacroPaquete, nombre]
         object_actions:
           _edit:          ~
           _delete:        ~
           xpdlexp:       { label: Exportar, action: xpdlexp }
-          xpdlimp:         { label: Importar, action: xpdlimp }
       filter:  ~
-      form:    
-        display:          [rel_organizacion, rel_paquete, nombre]
+      form:
+        display:          [rel_organizacion, rel_paquete, nombre, xpdl]
       edit:    ~
       new:     ~

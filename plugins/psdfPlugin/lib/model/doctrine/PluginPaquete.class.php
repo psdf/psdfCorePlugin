@@ -29,9 +29,10 @@ abstract class PluginPaquete extends BasePaquete
 	    $arguments['package_name'] = $this->getXpdlName();
       $arguments['package_display_name'] = $this->getNombre();
 	    $arguments['plantilla'] = 'default';
+            $options = array();
 	    $gxp = new psdfGenerateXpdlPackage();
 	    $xpdl = $gxp->execute($arguments, $options);
-      $this->setXpdl($xpdl);	
+      $this->setXpdl($xpdl);
   	}
   	else
   	{
