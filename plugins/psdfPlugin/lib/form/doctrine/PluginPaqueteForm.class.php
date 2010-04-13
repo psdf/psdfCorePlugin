@@ -35,8 +35,9 @@ abstract class PluginPaqueteForm extends BasePaqueteForm
         'path' => $this->getXpdlUploadDir(),
         'required' => false,
         )));
-    $this->setValidator('organizacion', new sfValidatorNumber(array(
-        'min' => 1,),
+
+    $this->setValidator('rel_organizacion', new sfValidatorInteger(
+        array('required' => true,),
         array('required' => 'Debe seleccionar una Organizacion.',)
         ));
   }
