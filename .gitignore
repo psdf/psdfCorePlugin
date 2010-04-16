@@ -2,3 +2,6 @@ log/*
 cache/*
 nbproject
 web/uploads/*
+lib/filter/doctrine/psdfPlugin/*
+lib/form/doctrine/psdfPlugin/*
+lib/model/doctrine/psdfPlugin/*
