@@ -54,7 +54,7 @@
 	    // Set no_script_name value in settings.yml for production environment
 	    $finder = sfFinder::type('file')->name('settings.yml');
 	    $filesystem->replaceTokens($finder->in($appDir.'/config'), '##', '##', array(
-	      'NO_SCRIPT_NAME'    => $firstApp ? 'on' : 'off',
+	      'NO_SCRIPT_NAME'    => $firstApp ? 'true' : 'false',
 	      'CSRF_SECRET'       => sfYamlInline::dump(sfYamlInline::parseScalar($options['csrf-secret'])),
 	      'ESCAPING_STRATEGY' => sfYamlInline::dump((boolean) sfYamlInline::parseScalar($options['escaping-strategy'])),
 	    ));

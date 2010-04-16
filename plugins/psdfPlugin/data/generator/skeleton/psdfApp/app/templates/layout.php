@@ -5,11 +5,8 @@
     <?php include_metas() ?>
     <?php include_title() ?>
     <link rel="shortcut icon" href="/favicon.ico" />
-
-		<?php echo stylesheet_tag('../js/ext-js/resources/css/ext-all') ?>
-		<?php echo javascript_include_tag('ext-js/adapter/ext/ext-base') ?>
-		<?php echo javascript_include_tag('ext-js/ext-all') ?>
-
+    <?php include_stylesheets() ?>
+    <?php include_javascripts() ?>
   </head>
   <body>
     <?php echo $sf_content ?>
