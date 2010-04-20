@@ -17,4 +17,12 @@ Usuario:
   tableName: psdforg.usuario
   columns:
     nombre:             { type: string(30), notnull: true, unique: true }
-    pass:               { type: string(30), notnull: true, unique: true }    
+    pass:               { type: string(30), notnull: true, unique: true }
+
+Proyecto:
+  tableName: psdforg.proyecto
+  columns:
+    nombre:             { type: string(30), notnull: true, unique: true }
+    rel_organizacion:   { type: integer }
+  relations:
+    Organizacion:       { foreignAlias: Proyectos, local: rel_organizacion, foreign: id, type: one, foreignType: many }

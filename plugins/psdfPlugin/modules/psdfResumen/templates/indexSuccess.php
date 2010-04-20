@@ -1,13 +1,16 @@
-<h1>Backend core PSDF</h1>
-<p>Este frontend intenta resumir y ejecutar funcionalidad del core PSDF. El 
-    objetivo es hacerlo mediante procesos desde la Suite PSDF.</p>
+<h1>Backend PSDF</h1>
+
 <hr />
 
 <h2>- <?php echo link_to('Organizaciones', 'psdfOrganizacion/index') ?></h2>
 
-<h2>- <?php echo link_to('Macros/Paquetes', 'psdfPaquete/index') ?></h2>
+<h2>- <?php echo link_to('Proyectos', 'psdfProyecto/index') ?></h2>
+
+<h2>- <?php echo link_to('Macros y Paquetes', 'psdfPaquete/index') ?></h2>
 
 <h2>- <?php echo link_to('Procesos', 'psdfProceso/index') ?></h2>
+
+<h2>- <?php echo link_to('Exportar workspace TIBCO', 'psdfProyecto/exportar') ?></h2>
 
 <h2 onclick="toogleStatus('divPatrones')" style="cursor:pointer;">- Patrones</h2>
 <div id="divPatrones">

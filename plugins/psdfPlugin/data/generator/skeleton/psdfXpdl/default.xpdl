@@ -16,5 +16,6 @@
     <xpdl2:ExtendedAttribute Name="CreatedBy" Value="TIBCO Business Studio"/>
     <xpdl2:ExtendedAttribute Name="FormatVersion" Value="7"/>
     <xpdl2:ExtendedAttribute Name="PSDFVersion" Value="0.1"/>
+    <xpdl2:ExtendedAttribute Name="PSDFMacro" Value="##PACKAGE_MACRO_ID##"/>
   </xpdl2:ExtendedAttributes>
 </xpdl2:Package>

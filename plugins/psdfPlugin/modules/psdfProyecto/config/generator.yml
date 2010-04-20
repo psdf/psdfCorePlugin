@@ -1,13 +1,13 @@
 generator:
   class: sfDoctrineGenerator
   param:
-    model_class:           Proceso
+    model_class:           Proyecto
     theme:                 admin
     non_verbose_templates: true
     with_show:             false
     singular:              ~
     plural:                ~
-    route_prefix:          proceso
+    route_prefix:          proyecto_proyecto
     with_doctrine_route:   true
     actions_base_class:    sfActions
 
@@ -15,10 +15,13 @@ generator:
       actions: ~
       fields:  ~
       list:
-        sort:             [rel_paquete, asc]
-        display:          [nombre, paquete, imagen]
+        display:           [nombre, organizacion]
+        object_actions:
+          _edit:           ~
+          _delete:         ~
+          exportar:        { label: Exportar a TIBCO, action: exportar }
+          importar:        { label: Importar desde TIBCO, action: importar }
       filter:  ~
-      form:    
-        display:          [rel_paquete, nombre]
+      form:    ~
       edit:    ~
       new:     ~

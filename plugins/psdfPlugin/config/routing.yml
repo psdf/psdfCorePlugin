@@ -62,3 +62,12 @@ picture_picture:
     prefix_path:          psdfPicture
     column:               id
     with_wildcard_routes: true
+
+proyecto_proyecto:
+  class: sfDoctrineRouteCollection
+  options:
+    model:                Proyecto
+    module:               psdfProyecto
+    prefix_path:          psdfProyecto
+    column:               id
+    with_wildcard_routes: true

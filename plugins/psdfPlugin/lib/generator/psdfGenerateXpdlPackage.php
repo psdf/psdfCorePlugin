@@ -15,6 +15,7 @@
       $package_id = $arguments['package_id'];
       $package_name = $arguments['package_name'];
       $package_display_name = $arguments['package_display_name'];
+      $package_macro_id = $arguments['package_macro_id'];
       $plantilla = $arguments['plantilla'];
       
       if(!$plantilla) $plantilla='default';
@@ -36,6 +37,7 @@
         'PACKAGE_DATE'  => '',
         'PACKAGE_AUTHOR'  => isset($properties['symfony']['author']) ? $properties['symfony']['author'] : 'Your name here',
         'PACKAGE_VERSION'  => '1',
+        'PACKAGE_MACRO_ID'  => $package_macro_id,
       );
       
       foreach( $constants as $key => $value)

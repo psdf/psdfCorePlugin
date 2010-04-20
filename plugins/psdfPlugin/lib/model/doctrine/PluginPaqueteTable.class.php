@@ -4,5 +4,19 @@
  */
 abstract class PluginPaqueteTable extends Doctrine_Table
 {
+    /**
+     * Recupero los paquetes de un proyecto
+     *
+     * @param number $proyecto Identificador del proyecto
+     * @return Lista de paquetes
+     */
+    public function getPaquetesByProyecto($proyecto)
+    {
+        // Por ahora no hay filtro aplicable
+        $q = $this->createQuery('p')
+                ->where('p.rel_paquete > ?', 0)
+                ->orderBy('p.rel_paquete');
 
+        return $q->execute();
+    }
 }

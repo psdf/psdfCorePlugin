@@ -8,6 +8,7 @@ CREATE TABLE psdforg.organizacion (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNI
 CREATE TABLE psdfwf.paquete (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, xpdl TEXT, rel_organizacion BIGINT, rel_paquete BIGINT, PRIMARY KEY(id));
 CREATE TABLE psdfwf.picture (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, rel_paquete BIGINT, PRIMARY KEY(id));
 CREATE TABLE psdfwf.proceso (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, rel_paquete BIGINT, imagen VARCHAR(30), PRIMARY KEY(id));
+CREATE TABLE psdforg.proyecto (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, rel_organizacion BIGINT, PRIMARY KEY(id));
 CREATE TABLE psdforg.unidadorg (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, rel_organizacion BIGINT, PRIMARY KEY(id));
 CREATE TABLE psdforg.usuario (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, pass VARCHAR(30) NOT NULL UNIQUE, PRIMARY KEY(id));
 ALTER TABLE psdfwf.coordenada ADD CONSTRAINT psdfwf_coordenada_rel_proceso_psdfwf_proceso_id FOREIGN KEY (rel_proceso) REFERENCES psdfwf.proceso(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
@@ -19,4 +20,5 @@ ALTER TABLE psdfwf.paquete ADD CONSTRAINT psdfwf_paquete_rel_paquete_psdfwf_paqu
 ALTER TABLE psdfwf.paquete ADD CONSTRAINT psdfwf_paquete_rel_organizacion_psdforg_organizacion_id FOREIGN KEY (rel_organizacion) REFERENCES psdforg.organizacion(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE psdfwf.picture ADD CONSTRAINT psdfwf_picture_rel_paquete_psdfwf_paquete_id FOREIGN KEY (rel_paquete) REFERENCES psdfwf.paquete(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE psdfwf.proceso ADD CONSTRAINT psdfwf_proceso_rel_paquete_psdfwf_paquete_id FOREIGN KEY (rel_paquete) REFERENCES psdfwf.paquete(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE psdforg.proyecto ADD CONSTRAINT psdforg_proyecto_rel_organizacion_psdforg_organizacion_id FOREIGN KEY (rel_organizacion) REFERENCES psdforg.organizacion(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE psdforg.unidadorg ADD CONSTRAINT psdforg_unidadorg_rel_organizacion_psdforg_organizacion_id FOREIGN KEY (rel_organizacion) REFERENCES psdforg.organizacion(id) NOT DEFERRABLE INITIALLY IMMEDIATE;

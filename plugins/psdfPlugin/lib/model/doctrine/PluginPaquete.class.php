@@ -16,23 +16,25 @@ abstract class PluginPaquete extends BasePaquete
    * Genera o Actualiza un Package Xpdl en el atributo Xpdl.
    * Si es la primera vez lo va a generar desde la plantilla
    * En las veces sucesivas va a intentar actualizar label, name
+   * por si desde el diseño hayan actualizado el nombre, etc...
    * @return unknown_type
    */
   public function updateXpdlPackage()
   {
   	if( !$this->getXpdl() )
   	{
-      // No tiene xpdl asignado aun, lo genero
-      // a partir del esqueleto
+            // No tiene xpdl asignado aun, lo genero
+            // a partir del esqueleto
       
-  		$arguments['package_id'] = $this->getXpdlId();
+            $arguments['package_id'] = $this->getXpdlId();
 	    $arguments['package_name'] = $this->getXpdlName();
-      $arguments['package_display_name'] = $this->getNombre();
+            $arguments['package_display_name'] = $this->getNombre();
+            $arguments['package_macro_id'] = $this->getMacroPaquete()->getId();
 	    $arguments['plantilla'] = 'default';
             $options = array();
 	    $gxp = new psdfGenerateXpdlPackage();
 	    $xpdl = $gxp->execute($arguments, $options);
-      $this->setXpdl($xpdl);
+            $this->setXpdl($xpdl);
   	}
   	else
   	{
@@ -46,10 +48,10 @@ abstract class PluginPaquete extends BasePaquete
 	    $nodeList = $xp->query( "/xpdl2:Package" );	    
 	    $node = $nodeList->item(0);
 	    if($node->getAttribute('Id')=='_')
-        $node->setAttribute('Id', $this->getXpdlId());
+            $node->setAttribute('Id', $this->getXpdlId());
 	    $node->setAttribute('Name', $this->getXpdlName());
 	    $node->setAttribute('xpdExt:DisplayName', $this->getNombre());
-	    
+
 	    $xpdl = $this->xml->saveXML();
 	    $this->setXpdl($xpdl);  		
   	}
@@ -158,7 +160,9 @@ abstract class PluginPaquete extends BasePaquete
   
   public function preSave($event)
   {
-    $this->updateXpdlPackage();
+    // Omito si es un Macro
+    if( $this->getRelPaquete()>0 )
+        $this->updateXpdlPackage();
   }  
   
   /**
