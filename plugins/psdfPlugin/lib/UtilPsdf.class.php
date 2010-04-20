@@ -188,6 +188,40 @@ class UtilPsdf
       $func = create_function('$c', 'return strtoupper($c[1]);');
       return preg_replace_callback('/_([a-z])/', $func, $str);
     }
-    
-	}
+
+    /**
+     * Corrige un path string eliminando la barra final (/ o \) si la tuviese
+     * Ej. "/home/carpeta/" ==> "/home/carpeta"
+     * @param string $pPath
+     * @return string
+     */
+    static public function fixPath($pPath)
+    {
+        $test = substr(trim($pPath), strlen(trim($pPath))-1, 1);
+        if( substr(trim($pPath), strlen(trim($pPath))-1, 1)=='/' or
+            substr(trim($pPath), strlen(trim($pPath))-1, 1)=='\\' )
+        {
+            return substr(trim($pPath), 0, strlen(trim($pPath))-1);
+        }
+
+        return $pPath;
+    }
+
+    /**
+     * Recupera el contenido (recursivo) de un directorio
+     * @param <type> $ruta
+     * @param <type> $type dir / files / any
+     * @return <type>
+     */
+    static public function getDirToArray($ruta, $type='any')
+    {
+        $array_files = array();
+        $finder = sfFinder::type($type);
+        foreach ($finder->relative()->in($ruta) as $file)
+        {
+            $array_files[]=$file;
+        }
+        return $array_files;
+    }
+}
 ?>
