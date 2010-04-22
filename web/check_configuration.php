@@ -100,6 +100,24 @@ check(!ini_get('session.auto_start'), 'php.ini has session.auto_start set to off
 
 check(version_compare(phpversion(), '5.2.9', '!='), 'PHP version is not 5.2.9', 'PHP 5.2.9 broke array_unique() and sfToolkit::arrayDeepMerge(). Use 5.2.10 instead [Ticket #6211]', false);
 
+echo "\n** Permisos necesarios **\n\n";
+check(is_writable(dirname(__FILE__).'/../cache'), '/cache', 'Se necesitan permisos de escritura', true);
+check(is_writable(dirname(__FILE__).'/../log'), '/log', 'Se necesitan permisos de escritura', true);
+
+echo "\n";
+echo "********************************\n";
+echo "*                              *\n";
+echo "*  PSDF requirements check     *\n";
+echo "*                              *\n";
+echo "********************************\n";
+
+// Permisos
+echo "\n** Permisos necesarios **\n\n";
+check(is_writable(dirname(__FILE__).'/../apps'), '/apps', 'Se necesitan permisos de escritura (chmod 777 ./apps)', true);
+check(is_writable(dirname(__FILE__).'/../test'), '/test', 'Se necesitan permisos de escritura (chmod 777 ./test)', true);
+check(is_writable(dirname(__FILE__).'/../test/functional'), '/test/functional', 'Se necesitan permisos de escritura (chmod 777 ./test/functional)', true);
+check(is_writable(dirname(__FILE__).'/../web'), '/web', 'Se necesitan permisos de escritura (chmod 777 ./web)', true);
+
 if (!is_cli())
 {
   echo '</pre></body></html>';
