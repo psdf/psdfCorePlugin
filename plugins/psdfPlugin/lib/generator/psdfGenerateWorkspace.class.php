@@ -3,8 +3,9 @@
   /**
    * Crea un workspace Eclipse y un proyecto Tibco
    * Argumentos
-   *   $arguments['path'] Path del workspace a generar
-   *   $arguments['packages'] Listad de paquetes xpdl a generar
+   *   $arguments['wspath'] Path del workspace a generar
+   *   $arguments['pkpath'] sub path (dentro del workspace) donde generar los xpdl
+   *   $arguments['packages'] Lista de paquetes xpdl a generar
    * Opciones
    *   $options[]
    */
@@ -12,8 +13,8 @@
   {
     public function execute($arguments = array(), $options = array())
     {
-        $workspaceDir = UtilPsdf::fixPath( $arguments['path'] );
-        $packagesDir = $workspaceDir.'/proyecto/Process Packages/';
+        $workspaceDir = UtilPsdf::fixPath( $arguments['wspath'] );
+        $packagesDir = $workspaceDir.DIRECTORY_SEPARATOR.$arguments['pkpath'].DIRECTORY_SEPARATOR;
 
         if (is_dir($workspaceDir))
         {
@@ -34,10 +35,10 @@
             if( !is_dir($packagesDir.$pack['macro']) )
                 $filesystem->mkdirs($packagesDir.$pack['macro']);
 
-            $file = $packagesDir.$pack['macro'].'/'.$pack['name'].'.xpdl';
+            $file = $packagesDir.$pack['macro'].DIRECTORY_SEPARATOR.$pack['name'].'.xpdl';
             $filesystem->touch($file);
             file_put_contents($file, $pack['xpdl']);
-        }        
+        }
     }
 
   }
