@@ -101,18 +101,21 @@ class UtilXpdl {
     /**
      * Recupera el Nombre del paquete Xpdl archivo parametrizado.
      * El nombre responde a como fue nombrado el archivo Xpdl, deberia ser
-     * macro/paquete.xpdl
+     * ruta/al/workspace/proyecto/macro/paquete.xpdl
      * Si no respeta dicho formato retorna una cadena vacia
      * @param string $pFileXpdl Nombre del archivo
      * @return string Nombre del Macro o false si no lo tiene.
      */
     static public function getFileXpdlMacroName( $pFileXpdl )
     {
-        $partes = explode("/", $pFileXpdl);
-        if( count($partes)==2 ) // 2 porque tenemos macro / paquete.xpdl
-            return $partes[0];
-        else
-            return '';
+        // Tomo la anteultima parte (count - 2)
+        // ej: workspace/proyecto/miMacro/paquete.xpdl
+        // count=4 => workspace=0, proyecto=1, miMacro=2, paquete.xpdl=3
+        // macroName = count-2 = miMacro
+
+        $partes = explode(DIRECTORY_SEPARATOR, $pFileXpdl);
+        return $partes[count($partes)-2];
     }
 }
+
 ?>

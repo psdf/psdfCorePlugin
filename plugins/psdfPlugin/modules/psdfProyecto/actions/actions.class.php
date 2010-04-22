@@ -24,7 +24,7 @@ class psdfProyectoActions extends autoPsdfProyectoActions
         $this->proyecto['default_path'] = $default_path;
         $this->info = "Usuarios linux:<br />".
                       "&nbsp;&nbsp;- La carpeta que contendrá el workspace debe tener permisos de escritura: <i>chmod 777 <u>[path]</u></i><br/>".
-                      "&nbsp;&nbsp;- Una vez generado el workspace debe asignarsele los mismos permiso: <i>chown <u>[usuario]</u>:<u>[grupo]</u> <u>[workspace]</u> -R</i> ó con: <i>chmod 777 <u>[workspace]</u> -R</i>";
+                      "&nbsp;&nbsp;- Una vez generado el workspace debe asignarsele los mismos permisos: <i>chown <u>[usuario]</u>:<u>[grupo]</u> <u>[workspace]</u> -R</i> ó con: <i>chmod 777 <u>[workspace]</u> -R</i>";
         $this->post_action = 'exportarPost';
         $this->title = 'Exportar proyecto a workspace Tibco Studio Community 3.2';
     }
@@ -66,6 +66,12 @@ class psdfProyectoActions extends autoPsdfProyectoActions
     public function executeImportarList(sfWebRequest $request)
     {
         $default_path = $request->getPostParameter('proyecto[default_path]');
+
+        if( !is_dir($default_path) )
+        {
+          throw new sfException(sprintf('El workspace "%s" no existe o es invalido.', $this->proyecto['default_path']));
+        }
+
         $this->getResponse()->setCookie('psdf_ws_path', $default_path);
 
         $this->proyecto = array();
@@ -74,14 +80,20 @@ class psdfProyectoActions extends autoPsdfProyectoActions
         $this->post_action = 'importarPost';
         $this->title = 'Importar workspace desde Tibco Studio Community 3.2';
 
-        $packagesDir = UtilPsdf::fixPath($this->proyecto['default_path']).'/proyecto/Process Packages';
+        $subpath='-';
+        $proyecto = Doctrine::getTable('Proyecto')->find( $this->proyecto['id'] );
+        if( $proyecto )
+            $subpath = $proyecto->getSubPathInWorkspace();
 
-        if( !is_dir($packagesDir) )
+        $packages_full_dir = UtilPsdf::fixPath($this->proyecto['default_path']).DIRECTORY_SEPARATOR.$subpath;
+
+        if( !is_dir($packages_full_dir) )
         {
-          throw new sfException(sprintf('El workspace "%s" no existe o es invalido.', $this->proyecto['default_path']));
+          throw new sfException(sprintf('El directorio de paquetes xpdl "%s" no existe o es invalido.', $packages_full_dir));
         }
 
-        $this->proyecto['files'] = UtilPsdf::getDirToArray($packagesDir, 'files');
+        $this->proyecto['files'] = UtilPsdf::getDirToArray($packages_full_dir, 'files');
+        $this->proyecto['packages_full_dir'] = $packages_full_dir;
     }
 
     public function executeImportarPost(sfWebRequest $request)

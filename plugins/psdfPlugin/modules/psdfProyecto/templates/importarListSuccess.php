@@ -18,13 +18,14 @@
               <thead>
                 <tr>
                   <th id="sf_admin_list_batch_actions"><input id="sf_admin_list_batch_checkbox" type="checkbox" onclick="checkAll();" /></th>
-                  <th class="sf_admin_text sf_admin_list_th_nombre">Nombre</th>
-                  <th class="sf_admin_text sf_admin_list_th_imagen">Estado</th>
+                  <th class="sf_admin_text sf_admin_list_th_archivo">Archivo</th>
+                  <th class="sf_admin_text sf_admin_list_th_macro">Macro</th>
+                  <th class="sf_admin_text sf_admin_list_th_paquete">Paquete</th>
                 </tr>
               </thead>
               <tfoot>
                 <tr>
-                  <th colspan="3"><?php echo count($proyecto['files']) . ' Paquetes encontrados' ?></th>
+                  <th colspan="4"><?php echo count($proyecto['files']) . ' Paquetes encontrados' ?></th>
                 </tr>
               </tfoot>
               <tbody>
@@ -43,8 +44,10 @@
                       </td>
                       <td class="sf_admin_text sf_admin_list_td_nombre">
                         <?php echo $file ?></td>
+                      <td class="sf_admin_text sf_admin_list_td_macro">
+                        <?php echo UtilXpdl::getFileXpdlMacroName(UtilPsdf::fixPath($proyecto['default_path']).DIRECTORY_SEPARATOR.$file) ?></td>
                       <td class="sf_admin_text sf_admin_list_td_paquete">
-                        &nbsp;</td>
+                        <?php echo UtilXpdl::getFileXpdlName($proyecto['packages_full_dir'].DIRECTORY_SEPARATOR.$file) ?></td>
                     </tr>
                 <?php endforeach; ?>
               </tbody>

@@ -541,5 +541,30 @@ abstract class PluginPaquete extends BasePaquete
     else
       return '';
   }
-  
+
+public function syncProcess() {
+    if( !$this->xpdlLoad() )
+        throw new sfException(sprintf('No se pudo cargar xml/xpdl del paquete '.$this->getNombre()));
+
+    $xp = new domxpath( $this->xml );
+    $nodeList = $xp->query( "/xpdl2:Package/xpdl2:WorkflowProcesses/xpdl2:WorkflowProcess" );
+    foreach ( $nodeList as $node ) {
+        $id = $node->getAttribute( "Id" );
+        $id = is_numeric(substr($id,1)) ? substr($id,1) : 0;
+        $name = $node->getAttribute( "Name" );
+
+        $proc = Doctrine::getTable('Proceso')->find($id);
+        if( !$proc ) {
+            $proc = new Proceso();
+            $proc->setNombre($name);
+            $proc->setRelPaquete($this->getId());
+            $proc->save();
+        }
+        if( $proc->getNombre()!=$name ) {
+            $proc->setNombre($name);
+            $proc->save();
+        }
+    }  
+}
+
 }

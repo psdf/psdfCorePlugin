@@ -12,6 +12,16 @@
  */
 abstract class PluginProyecto extends BaseProyecto
 {
+  /**
+   * Recupera la ruta dentro del workspace donde se alojan los xpdl
+   * No incluye la ruta del workspace.
+   * Por ej. 'proyecto/Process' si se alojan en [workspacedir]/proyecto/Process
+   * Utilizado para la Exportación e Importación de un workspace
+   * @return string subpath
+   */
+  public function getSubPathInWorkspace() {
+      return 'proyecto'.DIRECTORY_SEPARATOR.'Process Packages';
+  }
 
   /**
    * Construccion de un workspace con los paquetes del proyecto
@@ -21,7 +31,8 @@ abstract class PluginProyecto extends BaseProyecto
   public function generateWorkspace( $pPath )
   {
     // Genero estructura de directorios
-    $arguments['path'] = $pPath;
+    $arguments['wspath'] = $pPath;
+    $arguments['pkpath'] = $this->getSubPathInWorkspace();
     $arguments['packages'] = $this->getPaquetesAExportar();
     $options = array();
 
@@ -51,19 +62,17 @@ abstract class PluginProyecto extends BaseProyecto
   }
 
 public function processWorkspace( $pPath, $pFiles ) {
+
+    // Para ir volcando los paquetes no procesados por alguna regla invalida
     $noimp = array();
+    
     foreach( $pFiles as $file ) {
-        $ok = false;
-
         // Intento determinar Ids de paquete y Macro a partir de atributos del xpdl a importar
-        $xpdlId = UtilXpdl::getFileXpdlId($pPath.'/proyecto/Process Packages/'.$file);
-        $xpdlName = UtilXpdl::getFileXpdlId($pPath.'/proyecto/Process Packages/'.$file);
-        $xpdlMacroId = UtilXpdl::getFileXpdlMacroId($pPath.'/proyecto/Process Packages/'.$file);
+        $xpdlId = UtilXpdl::getFileXpdlId($pPath.DIRECTORY_SEPARATOR.$this->getSubPathInWorkspace().DIRECTORY_SEPARATOR.$file);
+        $xpdlName = UtilXpdl::getFileXpdlName($pPath.DIRECTORY_SEPARATOR.$this->getSubPathInWorkspace().DIRECTORY_SEPARATOR.$file);
+        $xpdlMacroId = UtilXpdl::getFileXpdlMacroId($pPath.DIRECTORY_SEPARATOR.$this->getSubPathInWorkspace().DIRECTORY_SEPARATOR.$file);
         $xpdlMacroName = UtilXpdl::getFileXpdlMacroName($file);
-        $content = file_get_contents($pPath.'/proyecto/Process Packages/'.$file);
-
-        // Intento recuperar Paquete si ya estuviese almacenado
-        $pack = Doctrine::getTable('Paquete')->find(substr($xpdlId,1)>0?substr($xpdlId,1):0); // Saco el guion bajo
+        $content = file_get_contents($pPath.DIRECTORY_SEPARATOR.$this->getSubPathInWorkspace().DIRECTORY_SEPARATOR.$file);
 
         // Intento recuperar Macro si ya estuviese almacenado. Lo determino por:
         //  1- el macro Id como atributo extendido en el xpdl
@@ -82,35 +91,59 @@ public function processWorkspace( $pPath, $pFiles ) {
             }
         }
 
-        if( !$macro ) {
-            $macro = new Paquete();
-            $macro->setNombre($xpdlMacroName);
-            $macro->save();
+        // Intento recuperar Paquete si ya estuviese almacenado
+        $pack = Doctrine::getTable('Paquete')->find(substr($xpdlId,1)>0?substr($xpdlId,1):0); // Saco el guion bajo
+
+        // REGLAS
+
+        $err = array();
+
+        // Valido esten sincronizados...
+        if( $pack && $macro) {
+            if( $pack->getRelPaquete()!=$macro->getId() ) {
+                $err['file'] = $file;
+                $err['error'] = 'El Macro Id '.$xpdlId.' informado no coincide con el ya vinculado al paquete';
+            }
+        }
+        
+        // Valido el paquete ya no exista por el nombre
+        if( !$pack) {
+            $packNbre = Doctrine::getTable('Paquete')->findByNombre($xpdlName);
+            if( count($packNbre)>0 ) {
+                $err['file'] = $file;
+                $err['error'] = 'Ya existe un Paquete de nombre '.$xpdlName.' pero con distinto ID';
+            }
         }
 
-        // Actualizo el nombre si fuese cambiado
-        if( $macro->getNombre()!=$xpdlMacroName ) {
-            $macro->setNombre($xpdlMacroName);
-            $macro->save();
-        }
+        // CONTINUO SI SE PASARON TODAS LAS REGLAS
 
-        if( !$pack ) {
-            $pack = new Paquete();
+        if( count($err)==0 ) {
+            // Creo el macro si aún no existe
+            if( !$macro ) {
+                $macro = new Paquete();
+                $macro->setNombre($xpdlMacroName);
+                $macro->setRelOrganizacion( $this->getRelOrganizacion() );
+                $macro->save();
+            }
+            // Actualizo el nombre del Macro si fuese cambiado
+            if( $macro->getNombre()!=$xpdlMacroName ) {
+                $macro->setNombre($xpdlMacroName);
+                $macro->save();
+            }
+
+            // Creo el paquete si aún no existe y actualizo
+            if( !$pack ) {
+                $pack = new Paquete();
+                $pack->setRelPaquete($macro->getId());
+            }
             $pack->setNombre($xpdlName);
             $pack->setXpdl($content);
-            $pack->setRelPaquete($macro->getId());
+            $pack->setRelOrganizacion( $this->getRelOrganizacion() );
             $pack->save();
-        }
-
-        if( $pack->getRelPaquete()==$macro->getId() ) {
-            // Cumple los requisitos de sincronizacion. Paso a actualizarlo
-            $pack->setXpdl($content);
-            $pack->save();
-            $ok = true;
+            $pack->updateXpdlPackage(); // Para que ponga en el xpdl como id el del objeto paquete
+            $pack->syncProcess();
         }
         else {
-            $err['file'] = $file;
-            $err['error'] = 'El Macro Id '.$xpdlId.' informado no coincide con el ya vinculado al paquete';
             $noimp[] = $err;
         }
     }
