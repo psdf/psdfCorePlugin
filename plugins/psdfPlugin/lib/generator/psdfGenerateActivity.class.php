@@ -20,6 +20,11 @@ class psdfGenerateActivity {
         $activity = $arguments['activity'];
         $scripts = $arguments['scripts'];
 
+        // Fuerzo el cero (0) si no contiene valor
+        if( !$activity['is_autocomplete'] ) {
+            $activity['is_autocomplete']='0';
+        }
+
         $actionDir = sfConfig::get('sf_apps_dir').'/'.$app.'/modules/'.$module.'/actions';
         $templateDir = sfConfig::get('sf_apps_dir').'/'.$app.'/modules/'.$module.'/templates';
 
