@@ -1,0 +1,57 @@
+html {
+/* background-color:#565D6E; */
+}
+
+body {
+/* background-color:#565D6E;
+  background-image:url(../images/background.jpg);
+  background-position:left top;
+  background-repeat:repeat-x;
+  color:#707277;
+  text-align:center;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:12px; */
+  margin:0;
+  padding:0;
+}
+
+.header {
+  background-color: #2d3951;
+  background-image: url(/../psdfPlugin/images/logo_psdf.jpg);
+  background-repeat: no-repeat;
+  height:60px;
+  position:relative;
+/*  width:1020px; */
+}
+
+#menu {
+	background-color: #2d3951;
+        color: white;
+	height: 22px;
+}
+
+#menu A:link {text-decoration:none;color:white;}
+#menu A:visited {text-decoration:none;color:white;}
+#menu A:active {text-decoration:none;color:white;}
+#menu A:hover {text-decoration:underline;color:white;}
+
+.main {
+/*  background-image:url(../images/background_main.png);
+  background-position:left top;
+  background-repeat:repeat; */
+  margin:10px;
+  padding: 20px 20px 20px 20px;
+}
+
+.footer {
+  text-align:center;
+/*  background-image:url(../images/background_footer.png); */
+  background-position:0 0;
+  background-repeat:no-repeat;
+}
+
+.footer p {
+/*  color:#BCC6D5; */
+  margin:0;
+  padding:30px 0 15px;
+}

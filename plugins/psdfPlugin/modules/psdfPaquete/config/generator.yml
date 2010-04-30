@@ -16,17 +16,18 @@ generator:
         rel_organizacion: { label: Organizacion }
         rel_paquete:    { label: Macro }
       list:
-        fields:
-          nombreMacroPaquete: { label: Macro }
         sort:             [nombre, desc]
-        display:          [organizacion, nombreMacroPaquete, nombre]
+        display:          [macro, nombre, xpdl_id]
+        table_method:     retrieveJoinMacro
         object_actions:
-          _edit:          ~
           _delete:        ~
-          xpdlexp:        { label: Exportar, action: xpdlexp }
+          xpdlexp:        { label: Exportar XPDL, action: xpdlexp }
+        actions:          {}
+        batch_actions:    {}
+          
       filter:
-        display:          [rel_organizacion, rel_paquete, nombre]
+        display:          [rel_macro, nombre]
       form:
-        display:          [rel_organizacion, rel_paquete, nombre, xpdl]
+        display:          [rel_macro, nombre, xpdl_id, xpdl]
       edit:    ~
       new:     ~

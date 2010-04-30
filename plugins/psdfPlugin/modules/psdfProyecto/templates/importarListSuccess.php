@@ -6,6 +6,8 @@
 
   <div id="sf_admin_content">
 
+      <p>Seleccionar los paquetes a importar</p>
+
     <div class="sf_admin_form">
 
         <form action="<?php echo url_for('psdfProyecto/'.$post_action) ?>" method="post">

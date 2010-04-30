@@ -1,16 +1,13 @@
 <h1>Backend PSDF</h1>
-
 <hr />
 
 <h2>- <?php echo link_to('Organizaciones', 'psdfOrganizacion/index') ?></h2>
 
 <h2>- <?php echo link_to('Proyectos', 'psdfProyecto/index') ?></h2>
 
-<h2>- <?php echo link_to('Macros y Paquetes', 'psdfPaquete/index') ?></h2>
+<h2>- <?php echo link_to('Paquetes', 'psdfPaquete/index') ?></h2>
 
 <h2>- <?php echo link_to('Procesos', 'psdfProceso/index') ?></h2>
-
-<h2>- <?php echo link_to('Exportar workspace TIBCO', 'psdfProyecto/exportar') ?></h2>
 
 <h2 onclick="toogleStatus('divPatrones')" style="cursor:pointer;">- Patrones</h2>
 <div id="divPatrones">
@@ -19,6 +16,8 @@
 </div>
 
 <h2>- <?php echo link_to('Catalogos', 'psdfCatalogo/index') ?></h2>
+
+<?php /* La construcción y ejecución ahora desde el modulo psdfProceso
 
 <h2 onclick="toogleStatus('divConstruir')" style="cursor:pointer;">- Construir proceso</h2>
 <div id="divConstruir" style="padding: 0em 3em 0em 3em;">
@@ -73,6 +72,7 @@
         <?php echo "</form>" ?>
     </div>
 </div>
+*/ ?>
 
 <script type="text/javascript">
     toogleStatus('divConstruir');

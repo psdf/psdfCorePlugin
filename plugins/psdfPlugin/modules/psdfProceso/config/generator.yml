@@ -15,8 +15,14 @@ generator:
       actions: ~
       fields:  ~
       list:
-        sort:             [rel_paquete, asc]
-        display:          [nombre, paquete, imagen]
+        sort:              [rel_paquete, asc]
+        display:           [nombre, paquete, imagen]
+        actions:           {}
+        batch_actions:     {}
+        object_actions:
+          construir:       { label: Construir, action: construir }
+          ejecutar:        { label: Ejecutar, action: ejecutar }
+          _delete:         ~
       filter:  ~
       form:    
         display:          [rel_paquete, nombre]

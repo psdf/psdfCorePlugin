@@ -13,4 +13,24 @@ require_once dirname(__FILE__).'/../lib/psdfProcesoGeneratorHelper.class.php';
  */
 class psdfProcesoActions extends autoPsdfProcesoActions
 {
+  public function executeConstruir($request)
+  {
+    // Se construye desde el paquete por eso primero instancio el proceso 
+  	
+    $proc = Doctrine::getTable('Proceso')->find($request->getParameter('id'));
+    $proc->getPaquete()->build( $request->getParameter('id') );
+    $this->redirect($this->getModuleName().'/index');
+  }
+
+  public function executeEjecutar($request)
+  {
+    // Se construye desde el paquete por eso primero instancio el proceso
+    // para obtener relPaquete.
+
+    $proc = Doctrine::getTable('Proceso')->find($request->getParameter('id'));
+    $sf = $proc->getInfoSymfony();
+    
+    UtilPsdf::redirectApp($sf['application'], $sf['module'], $sf['action']);
+  }
+
 }

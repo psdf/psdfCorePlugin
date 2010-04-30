@@ -15,9 +15,16 @@ class psdfProyectoActions extends autoPsdfProyectoActions
 {
     public function executeExportar(sfWebRequest $request)
     {
-        $default_path = $this->getRequest()->getCookie('psdf_ws_path');
-        if( !$default_path )
-            $default_path = '/home/usuario/workspacePSDF';
+        $default_path = str_replace('__', ' ',$this->getRequest()->getCookie('psdf_ws_path'));
+        if( !$default_path ) {
+            $proyecto = Doctrine::getTable('Proyecto')->find($request->getParameter('id'));
+            if( $proyecto ) {
+                $default_path = '/home/usuario/Workspace '.$proyecto->getNombre();
+            }
+            else {
+                $default_path = '/home/usuario/WorkspacePSDF';
+            }
+        }
 
         $this->proyecto = array();
         $this->proyecto['id'] = $request->getParameter('id');
@@ -34,12 +41,11 @@ class psdfProyectoActions extends autoPsdfProyectoActions
         $id = $request->getPostParameter('proyecto[id]');
 
         $default_path = $request->getPostParameter('proyecto[default_path]');
-        $this->getResponse()->setCookie('psdf_ws_path', $default_path);
+        $this->getResponse()->setCookie('psdf_ws_path', str_replace(' ', '__', $default_path));
 
         $proyecto = Doctrine::getTable('Proyecto')->find($id);
 
-        if( $proyecto )
-        {
+        if( $proyecto ) {
             $ret = $proyecto->generateWorkspace($default_path);
         }
 
@@ -48,10 +54,17 @@ class psdfProyectoActions extends autoPsdfProyectoActions
 
     public function executeImportar(sfWebRequest $request)
     {
-        $default_path = $this->getRequest()->getCookie('psdf_ws_path');
-        if( !$default_path )
-            $default_path = '/home/usuario/workspacePSDF';
-
+        $default_path = str_replace('__', ' ',$this->getRequest()->getCookie('psdf_ws_path'));
+        if( !$default_path ) {
+            $proyecto = Doctrine::getTable('Proyecto')->find($request->getParameter('id'));
+            if( $proyecto ) {
+                $default_path = '/home/usuario/Workspace '.$proyecto->getNombre();
+            }
+            else {
+                $default_path = '/home/usuario/WorkspacePSDF';
+            }
+        }
+        
         $this->proyecto = array();
         $this->proyecto['id'] = $request->getParameter('id');
         $this->proyecto['default_path'] = $default_path;
@@ -69,10 +82,10 @@ class psdfProyectoActions extends autoPsdfProyectoActions
 
         if( !is_dir($default_path) )
         {
-          throw new sfException(sprintf('El workspace "%s" no existe o es invalido.', $this->proyecto['default_path']));
+          throw new sfException(sprintf('El workspace "%s" no es un directorio valido.', $default_path));
         }
 
-        $this->getResponse()->setCookie('psdf_ws_path', $default_path);
+        $this->getResponse()->setCookie('psdf_ws_path', str_replace(' ', '__', $default_path));
 
         $this->proyecto = array();
         $this->proyecto['id'] = $request->getPostParameter('proyecto[id]');
