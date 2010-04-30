@@ -1,15 +1,24 @@
 
 connection: psdf
 
+Macro:
+  tableName: psdfwf.macro
+  columns:
+    nombre:             { type: string(30), notnull: true, unique: true }
+    rel_proyecto:       { type: integer }
+  relations:
+    Proyecto:           { foreignAlias: macro, local: rel_proyecto, foreign: id, type: one, foreignType: many }
+
 Paquete:
   tableName: psdfwf.paquete
   columns:
     nombre:             { type: string(30), notnull: true, unique: true }
     xpdl:               { type: string }
-    rel_organizacion:   { type: integer }
+    rel_macro:          { type: integer }
     rel_paquete:        { type: integer }
+    xpdl_id:            { type: string(30), notnull: false, unique: true }
   relations:
-    Organizacion:       { foreignAlias: Paquetes, local: rel_organizacion, foreign: id, type: one, foreignType: many }
+    Macro:              { foreignAlias: Paquetes, local: rel_macro, foreign: id, type: one, foreignType: many }
     Paquete:            { foreignAlias: Paquetes2, local: rel_paquete, foreign: id, type: one, foreignType: many }
 
 Proceso:
@@ -18,6 +27,7 @@ Proceso:
     nombre:             { type: string(30), notnull: true, unique: true }    
     rel_paquete:        { type: integer }
     imagen:             { type: string(30) }
+    xpdl_id:            { type: string(30), notnull: true, unique: true }
   relations:
     Paquete:            { foreignAlias: Procesos, local: rel_paquete, foreign: id, type: one, foreignType: many }
 

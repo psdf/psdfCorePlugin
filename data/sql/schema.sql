@@ -4,10 +4,11 @@ CREATE TABLE psdfwf.coordenada (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE
 CREATE TABLE psdfwf.estado_flow (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, descripcion VARCHAR(100), PRIMARY KEY(id));
 CREATE TABLE psdfwf.flow (id BIGSERIAL, datafields TEXT, rel_estado BIGINT, rel_proceso BIGINT, PRIMARY KEY(id));
 CREATE TABLE psdfwf.flow_det (id BIGSERIAL, activity_id VARCHAR(30) NOT NULL, rel_estado BIGINT, rel_flow BIGINT, rel_usuario BIGINT, tstart TIME, tend TIME, PRIMARY KEY(id));
+CREATE TABLE psdfwf.macro (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, rel_proyecto BIGINT, PRIMARY KEY(id));
 CREATE TABLE psdforg.organizacion (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, PRIMARY KEY(id));
-CREATE TABLE psdfwf.paquete (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, xpdl TEXT, rel_organizacion BIGINT, rel_paquete BIGINT, PRIMARY KEY(id));
+CREATE TABLE psdfwf.paquete (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, xpdl TEXT, rel_macro BIGINT, rel_paquete BIGINT, xpdl_id VARCHAR(30) UNIQUE, PRIMARY KEY(id));
 CREATE TABLE psdfwf.picture (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, rel_paquete BIGINT, PRIMARY KEY(id));
-CREATE TABLE psdfwf.proceso (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, rel_paquete BIGINT, imagen VARCHAR(30), PRIMARY KEY(id));
+CREATE TABLE psdfwf.proceso (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, rel_paquete BIGINT, imagen VARCHAR(30), xpdl_id VARCHAR(30) NOT NULL UNIQUE, PRIMARY KEY(id));
 CREATE TABLE psdforg.proyecto (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, rel_organizacion BIGINT, PRIMARY KEY(id));
 CREATE TABLE psdforg.unidadorg (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, rel_organizacion BIGINT, PRIMARY KEY(id));
 CREATE TABLE psdforg.usuario (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, pass VARCHAR(30) NOT NULL UNIQUE, PRIMARY KEY(id));
@@ -16,8 +17,9 @@ ALTER TABLE psdfwf.coordenada ADD CONSTRAINT psdfwf_coordenada_rel_picture_psdfw
 ALTER TABLE psdfwf.flow ADD CONSTRAINT psdfwf_flow_rel_proceso_psdfwf_proceso_id FOREIGN KEY (rel_proceso) REFERENCES psdfwf.proceso(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE psdfwf.flow_det ADD CONSTRAINT psdfwf_flow_det_rel_usuario_psdforg_usuario_id FOREIGN KEY (rel_usuario) REFERENCES psdforg.usuario(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE psdfwf.flow_det ADD CONSTRAINT psdfwf_flow_det_rel_flow_psdfwf_flow_id FOREIGN KEY (rel_flow) REFERENCES psdfwf.flow(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE psdfwf.macro ADD CONSTRAINT psdfwf_macro_rel_proyecto_psdforg_proyecto_id FOREIGN KEY (rel_proyecto) REFERENCES psdforg.proyecto(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE psdfwf.paquete ADD CONSTRAINT psdfwf_paquete_rel_paquete_psdfwf_paquete_id FOREIGN KEY (rel_paquete) REFERENCES psdfwf.paquete(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
-ALTER TABLE psdfwf.paquete ADD CONSTRAINT psdfwf_paquete_rel_organizacion_psdforg_organizacion_id FOREIGN KEY (rel_organizacion) REFERENCES psdforg.organizacion(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE psdfwf.paquete ADD CONSTRAINT psdfwf_paquete_rel_macro_psdfwf_macro_id FOREIGN KEY (rel_macro) REFERENCES psdfwf.macro(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE psdfwf.picture ADD CONSTRAINT psdfwf_picture_rel_paquete_psdfwf_paquete_id FOREIGN KEY (rel_paquete) REFERENCES psdfwf.paquete(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE psdfwf.proceso ADD CONSTRAINT psdfwf_proceso_rel_paquete_psdfwf_paquete_id FOREIGN KEY (rel_paquete) REFERENCES psdfwf.paquete(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE psdforg.proyecto ADD CONSTRAINT psdforg_proyecto_rel_organizacion_psdforg_organizacion_id FOREIGN KEY (rel_organizacion) REFERENCES psdforg.organizacion(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
