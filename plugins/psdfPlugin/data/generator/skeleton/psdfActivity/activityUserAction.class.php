@@ -2,7 +2,7 @@
 
 class ##ACTIVITY##Action extends sfAction
 { 
-  public function execute(sfWebRequest $request)
+  public function execute($request)
   {
     if( !$request->isMethod('post') )
     {
@@ -49,8 +49,8 @@ class ##ACTIVITY##Action extends sfAction
    
   private function run()
   {
-  	// Instancio el patron
-  	$ptn = new ##PTN_NAME##Pattern();
+    // Instancio el patron
+    $ptn = new ##PTN_NAME##Pattern();
   	
     // Seteo parametros de entrada 
     ##PTN_SET_PARAMS##
@@ -62,8 +62,9 @@ class ##ACTIVITY##Action extends sfAction
     ##PTN_SET_TEMPLATE##
     
     // Tomo los datos del patron que van a la interfaz
-    foreach( $ptn->getTplParameters() as $name => $value )
+    foreach( $ptn->getTplParameters() as $name => $value ) {
       $this->$name = $value;
+    }
     
     // Llevo a la sesion la instancia actual del patron para recuperarla luego de la interfaz
     $this->getUser()->setFlash($this->f->getId().'/##PTN_NAME##', $ptn);

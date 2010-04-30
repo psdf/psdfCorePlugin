@@ -48,7 +48,7 @@ abstract class PluginProyecto extends BaseProyecto
    */
   public function getPaquetesAExportar()
   {
-    $packs = Doctrine_Core::getTable('Paquete')->getPaquetesByProyecto($this->getId());
+    $packs = Doctrine_Core::getTable('Paquete')->findByProyecto($this->getId());
     $list=array();
     $key=-1;
     foreach( $packs as $pack)
@@ -56,62 +56,58 @@ abstract class PluginProyecto extends BaseProyecto
         $key++;
         $list[$key]['name'] = $pack->getNombre();
         $list[$key]['xpdl'] = $pack->getXpdl();
-        $list[$key]['macro'] = $pack->getNombreMacroPaquete();
+        $list[$key]['macro'] = $pack->getMacro()->getNombre();
     }
     return $list;
   }
 
+/**
+ * Procesa un workspace importando los archivos xpdls seleccionados.
+ * Retorna un array con los archivos que no pudieron ser procesados.
+ * @param string $pPath Ruta del workspace
+ * @param array $pFiles Archivos Xpdls a Importar
+ * @return array Archivos no procesados
+ */
 public function processWorkspace( $pPath, $pFiles ) {
 
     // Para ir volcando los paquetes no procesados por alguna regla invalida
     $noimp = array();
     
     foreach( $pFiles as $file ) {
-        // Intento determinar Ids de paquete y Macro a partir de atributos del xpdl a importar
-        $xpdlId = UtilXpdl::getFileXpdlId($pPath.DIRECTORY_SEPARATOR.$this->getSubPathInWorkspace().DIRECTORY_SEPARATOR.$file);
-        $xpdlName = UtilXpdl::getFileXpdlName($pPath.DIRECTORY_SEPARATOR.$this->getSubPathInWorkspace().DIRECTORY_SEPARATOR.$file);
-        $xpdlMacroId = UtilXpdl::getFileXpdlMacroId($pPath.DIRECTORY_SEPARATOR.$this->getSubPathInWorkspace().DIRECTORY_SEPARATOR.$file);
-        $xpdlMacroName = UtilXpdl::getFileXpdlMacroName($file);
-        $content = file_get_contents($pPath.DIRECTORY_SEPARATOR.$this->getSubPathInWorkspace().DIRECTORY_SEPARATOR.$file);
 
-        // Intento recuperar Macro si ya estuviese almacenado. Lo determino por:
-        //  1- el macro Id como atributo extendido en el xpdl
-        //  2- el nombre de la subcarpeta que contiene el xpdl
-        // (Prevalece 1 sobre 2)
-        if( $xpdlMacroId>0 ) {
-            $macro = Doctrine::getTable('Paquete')->find($xpdlMacroId);
-        }
-        else {
-            $macro = Doctrine::getTable('Paquete')->findByNombre($xpdlMacroName);
-            if( count($macro)>0 ) {
-                $macro = $macro[0];
-            }
-            else {
-                $macro = false;
-            }
+        $full_path_xpdl = $pPath.DIRECTORY_SEPARATOR.
+                            $this->getSubPathInWorkspace().DIRECTORY_SEPARATOR.$file;
+
+        $xpdl = new Xpdl( $full_path_xpdl );
+
+        // Recupero Id y Nombre del paquete
+        $xpdlPackageId = $xpdl->getPackageId();
+        $xpdlPackageName = $xpdl->getPackageName();
+
+        // Recupero relaciones con Objeto Paquete y Macro del PSDF
+        // (si ya fué importado anteriormente sinó vendrá como nulo
+        $paquete_id = $xpdl->getPsdfPaquete();
+        $macro_id = $xpdl->getPsdfMacro();
+        $macro_name = $xpdl->getPsdfMacroName();
+        if( $macro_name==null ) {
+            $macro_name = $xpdl->determineMacroName();
         }
 
-        // Intento recuperar Paquete si ya estuviese almacenado
-        $pack = Doctrine::getTable('Paquete')->find(substr($xpdlId,1)>0?substr($xpdlId,1):0); // Saco el guion bajo
+        // Todo el xpdl como un string para guardarlo
+        $content = $xpdl->getContent();
+
+        // Intento recuperar Macro y Paquete si ya estuviesen almacenados
+        $macro = Doctrine::getTable('Macro')->findOneByNombre($macro_name);
+        $pack = Doctrine::getTable('Paquete')->findOneByXpdlId($xpdlPackageId);
 
         // REGLAS
 
         $err = array();
 
-        // Valido esten sincronizados...
-        if( $pack && $macro) {
-            if( $pack->getRelPaquete()!=$macro->getId() ) {
+        if( $pack ) {
+            if( $pack->getId() != $paquete_id ) {
                 $err['file'] = $file;
-                $err['error'] = 'El Macro Id '.$xpdlId.' informado no coincide con el ya vinculado al paquete';
-            }
-        }
-        
-        // Valido el paquete ya no exista por el nombre
-        if( !$pack) {
-            $packNbre = Doctrine::getTable('Paquete')->findByNombre($xpdlName);
-            if( count($packNbre)>0 ) {
-                $err['file'] = $file;
-                $err['error'] = 'Ya existe un Paquete de nombre '.$xpdlName.' pero con distinto ID';
+                $err['error'] = 'Ya existe el Paquete '.$xpdlPackageName.' pero no coinciden los ids';
             }
         }
 
@@ -120,28 +116,52 @@ public function processWorkspace( $pPath, $pFiles ) {
         if( count($err)==0 ) {
             // Creo el macro si aún no existe
             if( !$macro ) {
-                $macro = new Paquete();
-                $macro->setNombre($xpdlMacroName);
-                $macro->setRelOrganizacion( $this->getRelOrganizacion() );
+                $macro = new Macro();
+                $macro->setNombre($macro_name);
+                $macro->setRelProyecto( $this->getId() );
+            }
+            else {
+                // Actualizo el nombre del Macro si fuese cambiado
+                if( $macro->getNombre()!=$macro_name ) {
+                    $macro->setNombre($macro_name);
+                }
+            }
+            if( $macro->isNew() or $macro->isModified() ) {
                 $macro->save();
             }
-            // Actualizo el nombre del Macro si fuese cambiado
-            if( $macro->getNombre()!=$xpdlMacroName ) {
-                $macro->setNombre($xpdlMacroName);
-                $macro->save();
-            }
+
 
             // Creo el paquete si aún no existe y actualizo
             if( !$pack ) {
                 $pack = new Paquete();
-                $pack->setRelPaquete($macro->getId());
+                $pack->setNombre($xpdlPackageName);
+                $pack->setRelMacro($macro->getId());
+                $pack->setXpdl($content);
+                $pack->setXpdlId($xpdlPackageId);
+                $pack->save(); // Grabo para que genere el Id
             }
-            $pack->setNombre($xpdlName);
-            $pack->setXpdl($content);
-            $pack->setRelOrganizacion( $this->getRelOrganizacion() );
-            $pack->save();
-            $pack->updateXpdlPackage(); // Para que ponga en el xpdl como id el del objeto paquete
-            $pack->syncProcess();
+            else {
+                if( $pack->getXpdl()!=$content ) {
+                    $pack->setXpdl($content);
+                }
+                if( $pack->getNombre()!=$xpdlPackageName ) {
+                    $pack->setNombre($xpdlPackageName);
+                }
+            }
+            // Genero/Actualizo relaciones xpdl con psdf
+            $pack->setPsdfDataInXpdl( $pack->getId(), $macro->getId(), $macro->getNombre() );
+
+            if( $pack->isNew() or $pack->isModified() ) {
+                // Sincronizo procesos (seteos ids en xpdl y objetos)
+                $ret = $pack->syncProcess();
+                if( count($err)>0 ) {
+                    $noimp[] = array_merge($noimp, $ret);
+                }
+                // Guardo el paquete con los cambios
+                $pack->save();
+                // Guardo el archivo con los ids seteados
+                file_put_contents( $full_path_xpdl, $pack->xpdl->getContent() );
+            }
         }
         else {
             $noimp[] = $err;

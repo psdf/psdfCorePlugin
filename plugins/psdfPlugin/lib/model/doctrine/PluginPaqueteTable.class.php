@@ -4,19 +4,44 @@
  */
 abstract class PluginPaqueteTable extends Doctrine_Table
 {
-    /**
-     * Recupero los paquetes de un proyecto
-     *
-     * @param number $proyecto Identificador del proyecto
-     * @return Lista de paquetes
-     */
-    public function getPaquetesByProyecto($proyecto)
-    {
-        // Por ahora no hay filtro aplicable
-        $q = $this->createQuery('p')
-                ->where('p.rel_paquete > ?', 0)
-                ->orderBy('p.rel_paquete');
+/**
+ * Recupero los paquetes de un proyecto
+ *
+ * @param number $proyecto Identificador del proyecto
+ * @return Lista de paquetes
+ */
+public function findByProyecto($proyecto) {
+    
+    $q = $this->createQuery('p');
 
-        return $q->execute();
+    $rootAlias = $q->getRootAlias();
+    $q->leftJoin($rootAlias . '.Macro m');
+    $q->andWhere('m.rel_proyecto = ?', $proyecto);
+
+    return $q->execute();
+}
+
+public function findByIdsXpdl( $id=null, $xpdl_id=null, Doctrine_Query $q=null ) {
+    if (is_null($q)) {
+        $q = $this->createQuery('p');
     }
+    if( !is_null($id) )
+        $q->andWhere( 'p.id = ?', $id );
+    if( !is_null($xpdl_id) )
+        $q->andWhere( 'p.xpdl_id = ?', $xpdl_id );
+
+    return $q->execute();
+}
+
+/**
+ * Recupero los Paquetes junto con Macros
+ * @param Doctrine_Query $q
+ * @return <type> 
+ */
+public function retrieveJoinMacro(Doctrine_Query $q) {
+    $rootAlias = $q->getRootAlias();
+    $q->leftJoin($rootAlias . '.Macro m');
+    return $q;
+}
+
 }

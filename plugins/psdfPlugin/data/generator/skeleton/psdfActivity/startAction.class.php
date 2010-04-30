@@ -2,7 +2,7 @@
 
 class ##ACTIVITY##Action extends sfAction
 {
-  public function execute(sfWebRequest $request)
+  public function execute($request)
   {
     // Nuevo flujo, nueva instancia
     $this->f = new Flow();
