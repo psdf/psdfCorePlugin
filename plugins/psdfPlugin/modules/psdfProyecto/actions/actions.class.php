@@ -29,9 +29,11 @@ class psdfProyectoActions extends autoPsdfProyectoActions
         $this->proyecto = array();
         $this->proyecto['id'] = $request->getParameter('id');
         $this->proyecto['default_path'] = $default_path;
-        $this->info = "Usuarios linux:<br />".
-                      "&nbsp;&nbsp;- La carpeta que contendrá el workspace debe tener permisos de escritura: <i>chmod 777 <u>[path]</u></i><br/>".
-                      "&nbsp;&nbsp;- Una vez generado el workspace debe asignarsele los mismos permisos: <i>chown <u>[usuario]</u>:<u>[grupo]</u> <u>[workspace]</u> -R</i> ó con: <i>chmod 777 <u>[workspace]</u> -R</i>";
+        $this->info = "<ul>Usuarios linux:<ul>
+                        <li>La carpeta que contendrá el workspace debe tener permisos de escritura: <b>chmod 777 [path]</b></li>
+                        <li>Una vez generado el workspace debe asignarsele como dueño el usuario del SO: <b>chown [usuario]:[grupo] [workspace] -R</b>
+                            y darle permisos de escritura con: <b>chmod 777 [workspace] -R</b></li>
+                       </ul>";
         $this->post_action = 'exportarPost';
         $this->title = 'Exportar proyecto a workspace Tibco Studio Community 3.2';
     }
