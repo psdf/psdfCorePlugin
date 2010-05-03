@@ -202,7 +202,7 @@ public function build($ids=array())
             $scriptSetDF = '';
             $ptnName = '';
             $scriptPtnSetParams = '';
-            $scriptPtnSetTemplate = '';
+            $scriptPtnUrlTemplate = '';
             $scriptNA = '';
 
             // Informacion a anexar a los errores
@@ -253,16 +253,23 @@ public function build($ids=array())
                     // Genero script de lectura de parametros a pasar al patron
 
                     foreach( $pattern['Params'] as $param => $value ) {
-                        if( isset($dataFields[$value]) ) {
+                        // Si es un array convierto a string vacio para omitir warnings
+                        $v = is_array($value)?'':$value;
+                        if( array_key_exists($v, $datafields) ) {
                             // Es un dataField: $ptn->setParameter( 'param', $this->f->getDataField('datafield') );
                             $scriptPtnSetParams.= "%sptn->setParameter( '%s', %sthis->f->getDataField('%s') );%s";
                             $scriptPtnSetParams = sprintf($scriptPtnSetParams, chr(36), $param, chr(36), $value, chr(10));
       			}
-      			elseif( strpos($value, '%') and strrpos($value, '%') ) {
+      			elseif( strpos($v, '%') and strrpos($v, '%') ) {
                             // Es una variable de entorno: $ptn->setParameter( 'param', $this->f->getContextVar('var') );
                             $scriptPtnSetParams.= "%sptn->setParameter( '%s', %sthis->f->getContextVar('%s') );%s";
                             $scriptPtnSetParams = sprintf($scriptPtnSetParams, chr(36), $param, chr(36), $value, chr(10));
      			}
+                        elseif( is_array($value )) {
+                            // Es un array: $ptn->setParameter( 'param', 'valor' );
+                            $scriptPtnSetParams.= "%sptn->setParameter( '%s', '%s' );%s";
+                            $scriptPtnSetParams = sprintf($scriptPtnSetParams, chr(36), $param, sfYaml::dump($value), chr(10));
+                        }
       			else {
                             // Es un numerico/alfanumerico: $ptn->setParameter( 'param', 'valor' );
                             $scriptPtnSetParams.= "%sptn->setParameter( '%s', '%s' );%s";
@@ -279,9 +286,10 @@ public function build($ids=array())
                             $scriptPtnSetTemplate.= "%sthis->%s = %sptn->getParameter( '%s' );%s";
                             $scriptPtnSetTemplate = sprintf($scriptPtnSetTemplate, chr(36), $param, chr(36), $param, chr(10));
                         } */
-	          	// $this->include = 'urlTemplate';
-                        $scriptPtnSetTemplate.= "%sthis->include = '%s';%s";
-                        $scriptPtnSetTemplate = sprintf($scriptPtnSetTemplate, chr(36), $ptn->getTemplate(), chr(10));
+	          	// Ej: $this->include = 'urlTemplate';
+                        //$scriptPtnSetTemplate.= "%sthis->include = '%s';%s";
+                        //$scriptPtnSetTemplate = sprintf($scriptPtnSetTemplate, chr(36), $ptn->getTemplate(), chr(10));
+                        $scriptPtnUrlTemplate = $ptn->getTemplate();
                     }
                 }
 
@@ -289,7 +297,9 @@ public function build($ids=array())
                 // Hoy UN SOLO patron
                 foreach( $patterns as $key => $pattern ) {
                     foreach( $pattern['Params'] as $param => $value ) {
-                        if( isset($dataFields[$value]) ) {
+                        // Si es un array convierto a string vacio para omitir warnings
+                        $v = is_array($value)?'':$value;
+                        if( array_key_exists($v, $datafields) ) {
                             // Es un dataField: $this->f->setDataField( 'datafield', $ptn->getParameter( 'param') );
                             $scriptSetDF.= "%sthis->f->setDataField( '%s', %sptn->getParameter( '%s') );%s";
                             $scriptSetDF = sprintf($scriptSetDF, chr(36), $value, chr(36), $param, chr(10));
@@ -330,7 +340,7 @@ public function build($ids=array())
                 'set_datafields' => $scriptSetDF,
                 'ptn_name' => $ptnName,
                 'ptn_set_params' => $scriptPtnSetParams,
-                'ptn_set_template' => $scriptPtnSetTemplate,
+                'ptn_url_template' => $scriptPtnUrlTemplate,
                 'rules_next' => $scriptNA,
                 );
 
