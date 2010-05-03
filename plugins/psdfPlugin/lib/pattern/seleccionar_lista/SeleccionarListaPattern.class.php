@@ -4,8 +4,8 @@ class SeleccionarListaPattern extends BasePattern
 {
     protected
         $in_lista,        // Lista de objetos
-        $in_atributos,    // Atributos a visualizar
-        $in_etiquetas,    // Etiquetas para los atributos
+        $in_atributos=array(),    // Atributos a visualizar
+        $in_etiquetas=array(),    // Etiquetas para los atributos
         $in_multiselect,  // Multiseleccion
         $in_obligatorio,  // Obligatorio al menos una seleccion
         $out_lista,       // Lista xml retornada seleccionada
@@ -51,6 +51,9 @@ class SeleccionarListaPattern extends BasePattern
                     $nds = $nodes->item($i)->getElementsByTagName($att);
                     $objetos[$i][$att] = $nds->item(0)->nodeValue;
                 }
+                // Fuerzo el id se mantenga
+                $nds = $nodes->item($i)->getElementsByTagName('id');
+                $objetos[$i]['id'] = $nds->item(0)->nodeValue;
             }
 
             // Paso informacion a la interfaz
