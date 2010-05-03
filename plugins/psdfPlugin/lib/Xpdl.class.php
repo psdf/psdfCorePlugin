@@ -146,35 +146,43 @@ class Xpdl {
         if( $type==self::EXTENDED_ACTIVITY) {
             $query.= "/xpdl2:Activities/xpdl2:Activity[@Id=\"".$parent[1]."\"]";
         }
-        $query.= "/xpdl2:ExtendedAttributes/xpdl2:ExtendedAttribute[@Name=\"".$name."\"]";
-        $nodeList = $this->getElementsByQuery( $query );
-        $node = $nodeList->item(0);
-        if( $node ) {
-            $node->setAttribute('Value', $value);
-        }
-        else {
+        $query_es = $query."/xpdl2:ExtendedAttributes";
+        $query_e  = $query."/xpdl2:ExtendedAttributes/xpdl2:ExtendedAttribute[@Name=\"".$name."\"]";
+
+        // Busco el atributo extendido (xpdl2:Extended)
+        $nodeList = $this->getElementsByQuery( $query_e );
+        $ext = $nodeList->item(0);
+        if( !$ext ) {
+            
+            // No lo encontré entonces lo creo
             $ext = $this->xml->createElement('xpdl2:ExtendedAttribute');
             $ext->setAttribute('Name', $name);
-            $ext->setAttribute('Value', $value);
+            
+            // Busco la etiqueta contenedora para agregarla en ella (xpdl2/ExtendedAttributes)
+            $nodeList = $this->getElementsByQuery( $query_es );
+            $exts = $nodeList->item(0);
+            if( !$exts ) {
 
-            $query = "/xpdl2:Package";
-            if( $type==self::EXTENDED_PROCESS or $type==self::EXTENDED_ACTIVITY ) {
-                $query.= "/xpdl2:WorkflowProcesses/xpdl2:WorkflowProcess[@Id=\"".$parent[0]."\"]";
+                // No lo encontré entonces lo creo
+                $exts = $this->xml->createElement('xpdl2:ExtendedAttributes');
+
+                // Busco el padre para agregarlo en el (paquete, proceso o actividad)
+                $nodeList = $this->getElementsByQuery( $query );
+                $parent = $nodeList->item(0);
+                if( !$parent ) {
+
+                    // No lo encontre, esto no deberia ser lo normal
+                    return false;
+                }
+
+                $parent->appendChild($exts);
             }
-            if( $type==self::EXTENDED_ACTIVITY) {
-                $query.= "/xpdl2:Activities/xpdl2:Activity[@Id=\"".$parent[1]."\"]";
-            }
-            $nodeList = $this->getElementsByQuery( $query );
-            $exts = $nodeList->item(0)->getElementsByTagNameNS($this->ns_xpdl2, 'ExtendedAttributes');
-            if( $exts->length > 0 ) {
-                $exts->item(0)->appendChild($ext);
-            }
-            else {
-                $new = $this->xml->createElement('xpdl2:ExtendedAttributes');
-                $new->appendChild($ext);
-                $nodeList->item(0)->appendChild($new);
-            }
+
+            $exts->appendChild($ext);
         }
+
+        // Actualizo el valor 
+        $ext->setAttribute('Value', $value);
     }
 
     /**
@@ -214,7 +222,8 @@ class Xpdl {
     }
 
     public function getContent() {
-        return $this->xml->saveXML();
+        $content = $this->xml->saveXML();
+        return $content;
     }
 
     /**
@@ -611,6 +620,7 @@ class Xpdl {
             throw new sfException(sprintf('No se pudo leer yml de llamada a patron: %s', $e->getMessage()));
         }
 
+        // Quite el raiz Patron asi el 2do (Nombre) pasa a ser el 1ro.
         if( $pattern ) {
             $patterns[key($pattern)] = $pattern[key($pattern)];
         }
