@@ -8,7 +8,7 @@
  *   $arguments['action']
  *   $arguments['process'] (id, name)
  *   $arguments['activity'] (name, type, is_autocomplete)
- *   $arguments['scripts'] (set_datafields, ptn_name, ptn_set_params, ptn_set_template, rules_netxt)
+ *   $arguments['scripts'] (set_datafields, ptn_name, ptn_set_params, ptn_url_template, rules_next)
  * Opciones
  */
 class psdfGenerateActivity {
@@ -75,7 +75,7 @@ class psdfGenerateActivity {
                 'SET_DATAFIELDS' => $scripts['set_datafields'],
                 'PTN_NAME' => $scripts['ptn_name'],
                 'PTN_SET_PARAMS' => $scripts['ptn_set_params'],
-                'PTN_SET_TEMPLATE' => $scripts['ptn_set_template'],
+                'PTN_URL_TEMPLATE' => file_exists($scripts['ptn_url_template']) ? file_get_contents($scripts['ptn_url_template']) : '',
                 'RULES_NEXT' => $scripts['rules_next'],
                 'ACTIVITY_AUTOCOMPLETE' => $activity['is_autocomplete'],
         );

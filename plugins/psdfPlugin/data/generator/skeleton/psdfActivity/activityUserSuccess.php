@@ -3,10 +3,7 @@
 
 <form method="post" action="<?php echo url_for('##MODULE##/##ACTIVITY##') ?>">
 
-    <?php // logica particular del patron si la hay ?>
-    <?php if( isset($include) ): ?>
-        <?php include($include); ?>
-    <?php endif; ?>
+    ##PTN_URL_TEMPLATE##
 
     <input type="hidden" name="f" value="<?php echo $f->getId() ?>" />
 
