@@ -230,7 +230,7 @@ public function build($ids=array())
                 // PERSONALIZAR ACTIVIDADES DE TIPOS YA IMPLEMENTADOS
 
                 // Tratamiento de patrones
-                $patterns = $this->xpdl->getPsdfPatterns($process->getId(), $activity['id']);
+                $patterns = $this->xpdl->getPsdfPatterns($process->getXpdlId(), $activity['id']);
 
                 // Regla momentanea de un solo patron
                 if( count($patterns)>1 ) {
