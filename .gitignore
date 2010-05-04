@@ -1,3 +1,5 @@
+cache/*
+log/*
 nbproject
 web/uploads/*
 lib/filter/doctrine/*
