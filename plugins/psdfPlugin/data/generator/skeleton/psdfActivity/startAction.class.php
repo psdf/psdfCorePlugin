@@ -28,8 +28,7 @@ class ##ACTIVITY##Action extends sfAction
   
   public function getNextActivity()
   {
-    $this->getUser()->setAttribute('psdfFlow['.$this->f->getId().']', $this->f);    
-    $this->getUser()->setFlash('psdf##PROCESS_ID##', $this->f->getId());
+    $this->getUser()->setCurrentFlow($this->f);
   	
     ##RULES_NEXT##
   	

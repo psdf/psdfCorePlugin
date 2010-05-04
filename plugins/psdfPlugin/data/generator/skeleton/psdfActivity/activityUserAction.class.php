@@ -4,42 +4,25 @@ class ##ACTIVITY##Action extends sfAction
 { 
   public function execute($request)
   {
-    if( !$request->isMethod('post') )
-    {
-      // Valido la continuidad del flujo para la misma sesion
-      if( $this->getUser()->hasFlash('psdf##PROCESS_ID##'))
-      {
-        // Recupero flujo
-        $this->f = $this->getUser()->getAttribute('psdfFlow['.$this->getUser()->getFlash('psdf##PROCESS_ID##').']');
-        
-        // Validaciones
-        if( !$this->f )
-          throw new sfException('No se pudo instanciar flujo de ejecucion');          
-        if( $this->f->getRelEstado()!=EstadoFlow::ACTIVO )
-          throw new sfException('El flujo ya no se encuentra activo');
-      }
-      else
-      {
-        throw new sfException('Resumen de flujo aun no implementado...');
-      }
+    // Recupero y Valido identificador del flujo
+    $this->f = $this->getUser()->getCurrentFlow();
+
+    if( !$this->f )
+      throw new sfException('No se pudo recuperar flujo de ejecucion');
+    if( $this->f->getRelProceso() != ##PROCESS_ID## )
+      throw new sfException('El flujo no se corresponde con el proceso instanciado');
+    if( $this->f->getRelEstado()!=EstadoFlow::ACTIVO )
+      throw new sfException('El flujo ya no se encuentra activo');
+
+    if( !$request->isMethod('post') ) {
 
       // Logica de/los patron/es previo a interfaz
       $this->run();
+
+      $this->getUser()->setCurrentFlow($this->f);
     }
-    else
-    {
-      // Recupero y Valido identificador del flujo
-      if( !$request->getParameter('f') )
-        throw new sfException('No se pudo determinar continuidad del flujo');       
+    else {
   
-      $this->f = $this->getUser()->getAttribute('psdfFlow['.$request->getParameter('f').']');
-  
-      // Validaciones
-      if( !$this->f )
-          throw new sfException('No se pudo instanciar flujo de ejecucion');          
-      if( $this->f->getRelEstado()!=EstadoFlow::ACTIVO )
-        throw new sfException('El flujo ya no se encuentra activo');  
-      
       // Logica de/los patron/es post interfaz
       $this->resume($request);
         
@@ -66,13 +49,16 @@ class ##ACTIVITY##Action extends sfAction
       $this->$name = $value;
     }
     
-    // Llevo a la sesion la instancia actual del patron para recuperarla luego de la interfaz
-    $this->getUser()->setFlash($this->f->getId().'/##PTN_NAME##', $ptn);
+    // Llevo en el flujo la instancia actual del patron para recuperarla luego de la interfaz
+    $this->getUser()->setCurrentPattern($ptn);
+    //$this->getUser()->setFlash($this->f->getId().'.##PTN_NAME##', $ptn);
   }
   
   private function resume($request)
   {
-  	$ptn = $this->getUser()->getFlash($this->f->getId().'/##PTN_NAME##');
+    $ptn = $this->getUser()->getCurrentPattern();
+    if( !$ptn )
+      throw new sfException('No se pudo recuperar instancia del patron ##PTN_NAME##');
   	
     // Logica particular del patron post interfaz
     $ptn->resume($request);
@@ -83,8 +69,7 @@ class ##ACTIVITY##Action extends sfAction
         
   private function getNextActivity()
   {
-    $this->getUser()->setAttribute('psdfFlow['.$this->f->getId().']', $this->f);    
-    $this->getUser()->setFlash('psdf##PROCESS_ID##', $this->f->getId());
+    $this->getUser()->setCurrentFlow($this->f);
     
     ##RULES_NEXT##
     
