@@ -5,6 +5,7 @@ web/uploads/*
 lib/filter/doctrine/*
 lib/filter/doctrine/psdfPlugin/*
 lib/filter/doctrine/psdfPlugin/base/*
+lib/form/*
 lib/form/doctrine/*
 lib/form/doctrine/psdfPlugin/*
 lib/form/doctrine/psdfPlugin/base/*
