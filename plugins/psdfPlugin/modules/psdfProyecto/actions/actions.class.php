@@ -15,42 +15,36 @@ class psdfProyectoActions extends autoPsdfProyectoActions
 {
     public function executeExportar(sfWebRequest $request)
     {
-        $default_path = str_replace('__', ' ',$this->getRequest()->getCookie('psdf_ws_path'));
-        if( !$default_path ) {
-            $proyecto = Doctrine::getTable('Proyecto')->find($request->getParameter('id'));
-            if( $proyecto ) {
-                $default_path = '/home/usuario/Workspace '.$proyecto->getNombre();
-            }
-            else {
-                $default_path = '/home/usuario/WorkspacePSDF';
-            }
-        }
-
-        $this->proyecto = array();
-        $this->proyecto['id'] = $request->getParameter('id');
-        $this->proyecto['default_path'] = $default_path;
-        $this->info = "<ul>Usuarios linux:<ul>
-                        <li>La carpeta que contendrá el workspace debe tener permisos de escritura: <b>chmod 777 [path]</b></li>
-                        <li>Una vez generado el workspace debe asignarsele como dueño el usuario del SO: <b>chown [usuario]:[grupo] [workspace] -R</b>
-                            y darle permisos de escritura con: <b>chmod 777 [workspace] -R</b></li>
-                       </ul>";
-        $this->post_action = 'exportarPost';
-        $this->title = 'Exportar proyecto a workspace Tibco Studio Community 3.2';
-    }
-
-    public function executeExportarPost(sfWebRequest $request)
-    {
-        $id = $request->getPostParameter('proyecto[id]');
-
-        $default_path = $request->getPostParameter('proyecto[default_path]');
-        $this->getResponse()->setCookie('psdf_ws_path', str_replace(' ', '__', $default_path));
-
-        $proyecto = Doctrine::getTable('Proyecto')->find($id);
-
+        $proyecto = Doctrine::getTable('Proyecto')->find($request->getParameter('id'));
         if( $proyecto ) {
-            $ret = $proyecto->generateWorkspace($default_path);
-        }
 
+            // GENERO UN WORKSPACE TIBCO, LO COMPRIMO Y  DESCARGO PARA EL USUARIO
+
+            // Defino directorios. Nombre del workspace, Directorio temporal donde
+            // trabajar, directorio del workspace y nombre del zip a crear
+            $ws_name = 'ws'.$proyecto->getNombre();
+            $temp_dir = tempnam(sys_get_temp_dir(), 'ws').'d';
+            $ws_dir = $temp_dir.DIRECTORY_SEPARATOR.$ws_name;
+            $zip_file = $temp_dir.'.zip';
+
+            // Creo directorio temporal de trabajo y genero alli el workspace
+            mkdir( $temp_dir );
+            $ret = $proyecto->generateWorkspace($ws_dir);
+
+            // Paso a comprimir el archivo
+            $zip = new Zipper();
+            if ($zip->open($zip_file, ZIPARCHIVE::CREATE) === TRUE) {
+                $zip->addFolder($temp_dir.DIRECTORY_SEPARATOR);
+                $zip->close();
+
+                // Descargo al usuario
+                header("Content-type: application/octet-stream");
+                header ("Content-Length: " . @filesize($zip_file));
+                header("Content-disposition: attachment; filename=".$ws_name.".zip");
+                readfile($zip_file);
+                header ("Content-Type: text/html");
+            }
+        }
         $this->redirect($this->getModuleName().'/index');
     }
 
