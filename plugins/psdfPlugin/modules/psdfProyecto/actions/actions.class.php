@@ -49,76 +49,79 @@ class psdfProyectoActions extends autoPsdfProyectoActions
     }
 
     public function executeImportar(sfWebRequest $request)
-    {
-        $default_path = str_replace('__', ' ',$this->getRequest()->getCookie('psdf_ws_path'));
-        if( !$default_path ) {
-            $proyecto = Doctrine::getTable('Proyecto')->find($request->getParameter('id'));
-            if( $proyecto ) {
-                $default_path = '/home/usuario/Workspace '.$proyecto->getNombre();
-            }
-            else {
-                $default_path = '/home/usuario/WorkspacePSDF';
-            }
-        }
-        
+    {   
         $this->proyecto = array();
         $this->proyecto['id'] = $request->getParameter('id');
-        $this->proyecto['default_path'] = $default_path;
-        $this->info = '';
-        $this->post_action = 'importarList';
-        $this->title = 'Importar workspace desde Tibco Studio Community 3.2';
-
-        // Uso el mismo template que para exportar
-        $this->setTemplate('exportar');
+        
+        $proyecto = Doctrine::getTable('Proyecto')->find($request->getParameter('id'));
+        $this->proyecto['name'] = $proyecto->getNombre();
     }
 
     public function executeImportarList(sfWebRequest $request)
     {
-        $default_path = $request->getPostParameter('proyecto[default_path]');
-
-        if( !is_dir($default_path) )
-        {
-          throw new sfException(sprintf('El workspace "%s" no es un directorio valido.', $default_path));
-        }
-
-        $this->getResponse()->setCookie('psdf_ws_path', str_replace(' ', '__', $default_path));
-
-        $this->proyecto = array();
+        // Preparo el id y name del proyecto para la proxima accion
+        $this->proyecto=array();
         $this->proyecto['id'] = $request->getPostParameter('proyecto[id]');
-        $this->proyecto['default_path'] = $default_path;
-        $this->post_action = 'importarPost';
-        $this->title = 'Importar workspace desde Tibco Studio Community 3.2';
+        $this->proyecto['name'] = $request->getPostParameter('proyecto[name]');
 
-        $subpath='-';
-        $proyecto = Doctrine::getTable('Proyecto')->find( $this->proyecto['id'] );
-        if( $proyecto )
-            $subpath = $proyecto->getSubPathInWorkspace();
+        $files = $_FILES;
 
-        $packages_full_dir = UtilPsdf::fixPath($this->proyecto['default_path']).DIRECTORY_SEPARATOR.$subpath;
+        // Controles antes de subir el archivo:
+        // - Que tenga contenido
+        // - Que sea permitido
+        // - Que sea valido
 
-        if( !is_dir($packages_full_dir) )
-        {
-          throw new sfException(sprintf('El directorio de paquetes xpdl "%s" no existe o es invalido.', $packages_full_dir));
+        $this->error = array();
+        if ($files['filews']['size'] == 0) {
+            $this->error[] = "ERROR: Zero byte file upload";
+        }
+        $allowedFileTypes = array("application/zip");
+        if (!in_array($files['filews']['type'], $allowedFileTypes)) {
+            $this->error[] = "ERROR: File type not permitted";
+        }
+        if (!is_uploaded_file($files['filews']['tmp_name']))  {
+            $this->error[] = "ERROR: Not a valid file upload";
         }
 
-        $this->proyecto['files'] = UtilPsdf::getDirToArray($packages_full_dir, 'files');
-        $this->proyecto['packages_full_dir'] = $packages_full_dir;
+        if( count($this->error)>0 )
+            return sfView::ERROR;
+
+        // Bien, sigo adelante
+
+        // Defino directorio sobre el cual trabajar
+        $temp_dir = tempnam(sys_get_temp_dir(), 'ws').'d';
+        mkdir( $temp_dir );
+
+        // Descomprimo el archivo
+        $zip = new Zipper();
+        if ($zip->open($files['filews']['tmp_name']) === TRUE) {
+            if( $zip->extractTo($temp_dir) === TRUE ) {
+
+                // Recupero en un array la lista de documentos xpdl
+                $finder = sfFinder::type('file')->name('*.xpdl');
+                $this->proyecto['files'] = $finder->in($temp_dir);
+
+                return sfView::SUCCESS;
+            }
+
+        }
+
+        // Si llego aca es porque hubo problemas al descomprimir o tratar el zip
+        return sfView::ERROR;
     }
 
     public function executeImportarPost(sfWebRequest $request)
     {
-        $default_path = $request->getPostParameter('proyecto[default_path]');
         $id = $request->getPostParameter('proyecto[id]');
         $files = $request->getPostParameter('proyecto[files]');
 
         $proyecto = Doctrine::getTable('Proyecto')->find($id);
 
-        if( $proyecto )
-        {
-            $ret = $proyecto->processWorkspace($default_path, $files);
+        if( $proyecto ) {
+            $this->error = $proyecto->processWorkspace($files);
         }
 
-        $this->error = $ret;
-        $this->title = 'Importar workspace desde Tibco Studio Community 3.2';
+        if( count($this->error)>0 )
+            return sfView::ERROR;
     }
 }

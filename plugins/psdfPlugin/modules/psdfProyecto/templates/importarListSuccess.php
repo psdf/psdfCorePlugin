@@ -1,5 +1,5 @@
 <div id="sf_admin_container">
-  <h1><?php echo $title ?></h1>
+  <h1>Importar proyecto <?php echo $proyecto['name'] ?></h1>
 
   <div id="sf_admin_header">
       </div>
@@ -10,10 +10,9 @@
 
     <div class="sf_admin_form">
 
-        <form action="<?php echo url_for('psdfProyecto/'.$post_action) ?>" method="post">
+        <form action="<?php echo url_for('psdfProyecto/importarPost') ?>" method="post">
             <input type="hidden" name="sf_method" value="put" />
             <input type="hidden" name="proyecto[id]" value="<?php echo $proyecto['id']?>" id="proyecto_id" />
-            <input type="hidden" name="proyecto[default_path]" value="<?php echo $proyecto['default_path']?>" id="proyecto_id" />
             <input type="hidden" name="proyecto[_csrf_token]" value="4475a23eeb032296a407d6c23ba73b2d" id="proyecto__csrf_token" />
             <div class="sf_admin_list">
               <table cellspacing="0">
@@ -45,11 +44,12 @@
                         <input type="checkbox" name="proyecto[files][]" value="<?php echo $file ?>" class="sf_admin_batch_checkbox" />
                       </td>
                       <td class="sf_admin_text sf_admin_list_td_nombre">
-                        <?php echo $file ?></td>
+                        <?php $parts = explode(DIRECTORY_SEPARATOR, $file) ?>
+                        <?php echo $parts[count($parts)-1] ?></td>
                       <td class="sf_admin_text sf_admin_list_td_macro">
-                        <?php echo UtilXpdl::getFileXpdlMacroName(UtilPsdf::fixPath($proyecto['default_path']).DIRECTORY_SEPARATOR.$file) ?></td>
+                        <?php echo UtilXpdl::getFileXpdlMacroName($file) ?></td>
                       <td class="sf_admin_text sf_admin_list_td_paquete">
-                        <?php echo UtilXpdl::getFileXpdlName($proyecto['packages_full_dir'].DIRECTORY_SEPARATOR.$file) ?></td>
+                        <?php echo UtilXpdl::getFileXpdlName($file) ?></td>
                     </tr>
                 <?php endforeach; ?>
               </tbody>
