@@ -64,21 +64,17 @@ abstract class PluginProyecto extends BaseProyecto
 /**
  * Procesa un workspace importando los archivos xpdls seleccionados.
  * Retorna un array con los archivos que no pudieron ser procesados.
- * @param string $pPath Ruta del workspace
- * @param array $pFiles Archivos Xpdls a Importar
+ * @param array $files_xpdl Archivos Xpdls a Importar
  * @return array Archivos no procesados
  */
-public function processWorkspace( $pPath, $pFiles ) {
+public function processWorkspace( $files_xpdl=array(), $files_bom=array() ) {
 
     // Para ir volcando los paquetes no procesados por alguna regla invalida
     $noimp = array();
     
-    foreach( $pFiles as $file ) {
+    foreach( $files_xpdl as $file ) {
 
-        $full_path_xpdl = $pPath.DIRECTORY_SEPARATOR.
-                            $this->getSubPathInWorkspace().DIRECTORY_SEPARATOR.$file;
-
-        $xpdl = new Xpdl( $full_path_xpdl );
+        $xpdl = new Xpdl( $file );
 
         // Recupero Id y Nombre del paquete
         $xpdlPackageId = $xpdl->getPackageId();
@@ -159,8 +155,6 @@ public function processWorkspace( $pPath, $pFiles ) {
                 }
                 // Guardo el paquete con los cambios
                 $pack->save();
-                // Guardo el archivo con los ids seteados
-                file_put_contents( $full_path_xpdl, $pack->xpdl->getContent() );
             }
         }
         else {
