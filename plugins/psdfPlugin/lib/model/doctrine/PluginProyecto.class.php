@@ -22,7 +22,16 @@ abstract class PluginProyecto extends BaseProyecto
   public function getSubPathInWorkspace() {
       return 'proyecto'.DIRECTORY_SEPARATOR.'Process Packages';
   }
-
+  /**
+   * Recupera la ruta dentro del proyecto donde se alojan los xpdl
+   * No incluye la ruta del proyecto.
+   * Por ej. 'Process' si se alojan en [projectdir]/Process
+   * Utilizado para la Exportación e Importación de un proyecto
+   * @return string subpath
+   */
+  public function getSubPathInProject() {
+      return 'Process Packages';
+  }
   /**
    * Construccion de un workspace con los paquetes del proyecto
    * @param $pPath       Ruta destino del workspace (debe tener permisos de escritura)
@@ -40,6 +49,23 @@ abstract class PluginProyecto extends BaseProyecto
     $ws->execute($arguments, $options);
   }
 
+  /**
+   * Construccion de un proyect con sus paquetes xpdl
+   * @param $pPath       Ruta destino del proyecto (debe tener permisos de escritura)
+   * @return unknown_type
+   */
+  public function generateProject( $pPath )
+  {    
+    // Genero estructura de directorios
+    $arguments['pjpath'] = $pPath;
+    $arguments['pjname'] = $this->getNombre();
+    $arguments['pkpath'] = $this->getSubPathInProject();
+    $arguments['packages'] = $this->getPaquetesAExportar();
+    $options = array();
+
+    $pj = new psdfGenerateProject();
+    $pj->execute($arguments, $options);
+  }
   /**
    * Recupero una lista con los nombres, xpdl y macro de paquetes a exportar para
    * trabajarlo localmente.

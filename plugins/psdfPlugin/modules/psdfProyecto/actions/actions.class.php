@@ -15,35 +15,30 @@ class psdfProyectoActions extends autoPsdfProyectoActions
 {
     public function executeExportar(sfWebRequest $request)
     {
+        
         $proyecto = Doctrine::getTable('Proyecto')->find($request->getParameter('id'));
         if( $proyecto ) {
 
-            // GENERO UN WORKSPACE TIBCO, LO COMPRIMO Y  DESCARGO PARA EL USUARIO
+            // GENERO UN PROYECTO TIBCO, LO COMPRIMO Y DESCARGO PARA EL USUARIO
 
-            // Defino directorios. Nombre del workspace, Directorio temporal donde
+            // Defino directorios. Nombre del proyecto, Directorio temporal donde
             // trabajar, directorio del workspace y nombre del zip a crear
-            $ws_name = 'ws'.$proyecto->getNombre();
-            $temp_dir = tempnam(sys_get_temp_dir(), 'ws').'d';
-            $ws_dir = $temp_dir.DIRECTORY_SEPARATOR.$ws_name;
+            $pj_name = $proyecto->getNombre();
+            $temp_dir = tempnam(sys_get_temp_dir(), 'pj').'d';
+            $pj_dir = $temp_dir.DIRECTORY_SEPARATOR.$pj_name;
             $zip_file = $temp_dir.'.zip';
 
-            // Creo directorio temporal de trabajo y genero alli el workspace
+            // Creo directorio temporal de trabajo y genero alli el proyecto
             mkdir( $temp_dir );
-            $ret = $proyecto->generateWorkspace($ws_dir);
+            $ret = $proyecto->generateProject($pj_dir);
 
-            // Paso a comprimir el archivo
-            $zip = new Zipper();
-            if ($zip->open($zip_file, ZIPARCHIVE::CREATE) === TRUE) {
-                $zip->addFolder($temp_dir.DIRECTORY_SEPARATOR);
-                $zip->close();
-
-                // Descargo al usuario
-                header("Content-type: application/octet-stream");
-                header ("Content-Length: " . @filesize($zip_file));
-                header("Content-disposition: attachment; filename=".$ws_name.".zip");
-                readfile($zip_file);
-                header ("Content-Type: text/html");
+            if( UtilPsdf::comprimir($temp_dir.DIRECTORY_SEPARATOR, $zip_file) ) {
+                UtilPsdf::descargar($zip_file, $pj_name.'.zip');
             }
+            else {
+                throw new sfException(sprintf('No se pudo crear y comprimir el proyecto'));
+            }
+
         }
         $this->redirect($this->getModuleName().'/index');
     }
