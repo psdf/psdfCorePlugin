@@ -223,5 +223,58 @@ class UtilPsdf
         }
         return $array_files;
     }
+
+    /**
+     * Comprime un archivo o directorio
+     * Uso: UtilPsdf::comprimir('/home/usuario/foo/', '/home/usuario/foo.zip')
+     * NOTA: Si se comprimirá un directorio este debe finalizar con la barra.
+     * @param string $ruta Ruta del archivo/directorio a comprimir
+     * @param string $zip_salida Ruta/nombre del zip a generar
+     * @return boolean
+     */
+    static public function comprimir($ruta, $zip_salida) {
+        $zip = new Zipper();
+        if ($zip->open($zip_salida, ZIPARCHIVE::CREATE) === TRUE) {
+            $zip->addFolder($ruta);
+            $zip->close();
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
+     * Permite descargar un archivo.
+     * Uso: UtilPsdf::descargar('/home/usuario/foo.zip')
+     * fuente: http://www.webcomparte.com/foro/programacion-en-php/descargar-archivos-y-directorios-en-php/
+     * @param string $ruta Ruta del archivo a descargar
+     * @param string $nombre_archivo (opcional) Nombre de archivo con que 
+     *                  descargar sinó toma el de descarga.
+     * @return boolean
+     */
+    static public function descargar($ruta, $nombre_archivo = false) {
+        if(!is_dir($ruta) and !is_file($ruta)) {
+            return false; /* La ruta no existe */
+        }
+        if(headers_sent())
+            return false; /* Los headers ya fueron enviados */
+        if(!$handle = @fopen($ruta, 'r'))
+            return false; /* Imposible abrir el archivo */
+        header('Content-type: application/force-download');
+        if($nombre_archivo) { /* Se ha elegido un nombre de archivo para la descarga */
+            header('Content-Disposition: attachment; filename='.urlencode($nombre_archivo));
+        }else { /* Se utilizará el nombre de archivo original por defecto */
+            header('Content-Disposition: attachment; filename='.urlencode(basename($ruta)));
+        }
+        header('Content-Transfer-Encoding: binary');
+        header('Content-Length: '.filesize($ruta));
+        while(!feof($handle)) {
+            echo fread($handle, 1024); /* Escribe el archivo cada 1024 bites para evitar un DOS */
+        }
+        fclose($handle);
+
+        exit; /* Finaliza el script */
+    }
 }
 ?>
