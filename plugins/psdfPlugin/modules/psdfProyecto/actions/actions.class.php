@@ -110,6 +110,9 @@ class psdfProyectoActions extends autoPsdfProyectoActions
         $id = $request->getPostParameter('proyecto[id]');
         $files = $request->getPostParameter('proyecto[files]');
 
+        $this->proyecto=array();
+        $this->proyecto['name'] = $request->getPostParameter('proyecto[name]');
+        
         $proyecto = Doctrine::getTable('Proyecto')->find($id);
 
         if( $proyecto ) {

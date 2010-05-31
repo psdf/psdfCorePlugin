@@ -17,11 +17,11 @@
           <fieldset id="sf_fieldset_none">
             <div class="sf_admin_form_row sf_admin_text sf_admin_form_field_nombre">
                 <div>
-                    <label for="proyecto_path">Zip Workspace a importar</label>
+                    <label for="proyecto_path">Proyecto Zip a importar</label>
                     <div class="content">
                         <input type="file" name="filews" id="filews" />
                     </div>
-                    <div class="help">Comprima el workspace en un zip y subalo</div>
+                    <div class="help">Archivo formato zip generado desde el Tibco</div>
                 </div>
             </div>
           </fieldset>

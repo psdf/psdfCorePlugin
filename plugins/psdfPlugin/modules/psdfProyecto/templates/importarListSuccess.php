@@ -13,6 +13,7 @@
         <form action="<?php echo url_for('psdfProyecto/importarPost') ?>" method="post">
             <input type="hidden" name="sf_method" value="put" />
             <input type="hidden" name="proyecto[id]" value="<?php echo $proyecto['id']?>" id="proyecto_id" />
+            <input type="hidden" name="proyecto[name]" value="<?php echo $proyecto['name']?>" id="proyecto_name" />
             <input type="hidden" name="proyecto[_csrf_token]" value="4475a23eeb032296a407d6c23ba73b2d" id="proyecto__csrf_token" />
             <div class="sf_admin_list">
               <table cellspacing="0">

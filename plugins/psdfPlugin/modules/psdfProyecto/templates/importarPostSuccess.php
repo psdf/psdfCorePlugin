@@ -1,5 +1,5 @@
 <div id="sf_admin_container">
-  <h1><?php echo $title ?></h1>
+  <h1>Importar proyecto <?php echo $proyecto['name'] ?></h1>
 
   <div id="sf_admin_header">
   </div>
