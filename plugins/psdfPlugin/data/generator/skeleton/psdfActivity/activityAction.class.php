@@ -29,6 +29,11 @@ class ##ACTIVITY##Action extends sfAction
     
     // Logica particular del patron
     $ptn->execute();
+
+    if( $ptn->getError() ) {
+        $this->error = $ptn->getError();
+        return false;
+    }
   	
     // Actualizo datafields modificados por la actividad
     ##SET_DATAFIELDS##

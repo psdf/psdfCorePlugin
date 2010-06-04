@@ -30,6 +30,7 @@ class psdfGenerateActivity {
 
         $actionFile = $action.'Action.class.php';
         $templateFile = $action.'Success.php';
+        $errorFile = $action.'Error.php';
 
         $filesystem = new sfFilesystem();
 
@@ -57,6 +58,7 @@ class psdfGenerateActivity {
         elseif( $activity['type']=='TaskUser' or $activity['type']=='TaskManual' ) {
             $skeletonAction = dirname(__FILE__).'/../../data/generator/skeleton/psdfActivity/activityUserAction.class.php';
             $skeletonTemplate = dirname(__FILE__).'/../../data/generator/skeleton/psdfActivity/activityUserSuccess.php';
+            $skeletonError = dirname(__FILE__).'/../../data/generator/skeleton/psdfActivity/activityUserError.php';
         }
         else {
             $skeletonAction = dirname(__FILE__).'/../../data/generator/skeleton/psdfActivity/activityAction.class.php';
@@ -83,10 +85,15 @@ class psdfGenerateActivity {
         $finder = sfFinder::type('file')->name($actionFile);
         $filesystem->replaceTokens($finder->in($actionDir), '##', '##', $constants);
 
-        // Personalize template
+        // Personalize template Success y Error
         if( $activity['type']=='TaskUser' or $activity['type']=='TaskManual' ) {
+
             $filesystem->copy($skeletonTemplate, $templateDir.'/'.$templateFile);
             $finder = sfFinder::type('file')->name($templateFile);
+            $filesystem->replaceTokens($finder->in($templateDir), '##', '##', $constants);
+
+            $filesystem->copy($skeletonError, $templateDir.'/'.$errorFile);
+            $finder = sfFinder::type('file')->name($errorFile);
             $filesystem->replaceTokens($finder->in($templateDir), '##', '##', $constants);
         }
     }

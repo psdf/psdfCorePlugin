@@ -17,7 +17,9 @@ class ##ACTIVITY##Action extends sfAction
     if( !$request->isMethod('post') ) {
 
       // Logica de/los patron/es previo a interfaz
-      $this->run();
+      if( !$this->run() ) {
+          return sfView::ERROR;
+      }
 
       $this->getUser()->setCurrentFlow($this->f);
     }
@@ -26,7 +28,7 @@ class ##ACTIVITY##Action extends sfAction
       // Logica de/los patron/es post interfaz
       $this->resume($request);
         
-      $this->forward('##MODULE##', $this->getNextActivity());
+      $this->redirect('##MODULE##/'.$this->getNextActivity());
     }
   }
    
@@ -40,6 +42,11 @@ class ##ACTIVITY##Action extends sfAction
     
     // Logica particular del patron antes de visualizar interfaz
     $ptn->execute();
+
+    if( $ptn->getError() ) {
+        $this->error = $ptn->getError();
+        return false;
+    }
     
     // paso parametros a la interfaz si la tuviese
     ##PTN_SET_TEMPLATE##
@@ -52,6 +59,8 @@ class ##ACTIVITY##Action extends sfAction
     // Llevo en el flujo la instancia actual del patron para recuperarla luego de la interfaz
     $this->getUser()->setCurrentPattern($ptn);
     //$this->getUser()->setFlash($this->f->getId().'.##PTN_NAME##', $ptn);
+
+    return true;
   }
   
   private function resume($request)
