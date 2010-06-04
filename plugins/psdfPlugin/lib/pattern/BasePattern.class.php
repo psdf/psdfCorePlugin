@@ -3,7 +3,7 @@
 class BasePattern
 {
     protected
-        $error=null,               // Setear y chequear cuando el patron produzca error
+        $error=false,               // Setear y chequear cuando el patron produzca error
         $template_params=array();  // Para gestionar datos a la plantilla
     
     /**
