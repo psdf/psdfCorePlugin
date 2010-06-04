@@ -135,6 +135,9 @@ class UtilPsdf
         $nodes = $objXML->getElementsByTagName("obj");
         $size = $nodes->length;
 
+        if( $size==0)
+            return false;
+        
         // Obtengo id y clase del objeto
         $classname = $nodes->item(0)->getAttribute('class');
         //$id = $nodes->item(0)->getAttribute('id');
