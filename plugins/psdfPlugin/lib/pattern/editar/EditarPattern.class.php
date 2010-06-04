@@ -28,9 +28,10 @@
 class EditarPattern extends BasePattern
 {
     protected
+        $in_clase,      // Nombre de la clase (opcional, para cuando se quiera 
+                        // editar un objeto nuevo
         $in_lista,      // Lista XML de objetos
-        $in_fields,     // Propiedades de cada campo
-        $in_display,    // Campos a visualizar
+        $in_config,     // Configuración Yml Symfony de la edición
         $out_lista;     // Lista XML editada
 
     public function execute()
@@ -38,49 +39,69 @@ class EditarPattern extends BasePattern
         // Cargo parametros (fields y display van a la interfaz)
 
         $xml = $this->getParameter('in_lista');
-
-        if( $this->getParameter('in_fields')!="" ){
-            $this->setTplParameter( 'fields', $this->getParameter('in_fields') );
-        }else{
-            $this->setTplParameter( 'fields', array() );
-        }
-        if( $this->getParameter('in_display')!="" ){
-            $this->setTplParameter( 'display', $this->getParameter('in_display') );
-        }else{
-            $this->setTplParameter( 'display', array() );
-        }
-
-        // Convierto obj xml a instancia PHP (pasandolo a interfaz tambien)
+        $clase = $this->getParameter('in_clase'); // Opcional
 
         $obj = UtilPsdf::objXmlToInstance($xml);
-        /*
-        $obj2 = Doctrine::getTable('Proceso')->find(54);
-        echo '<br/>------------<br/>';
-        var_dump($obj);
-        echo '<br/>------------<br/>';
-        var_dump($obj2);
-        echo '<br/>------------<br/>';
-        die('');
-         */
-        $classname = get_class($obj);
-        $this->setTplParameter( 'obj', $obj );
-        $this->setTplParameter( 'classname', $classname );
+
+        if( $obj ) {
+            // Edicion! Instancio la clase form con el objeto
+            $formClassName = get_class($obj).'Form';
+            $form = new $formClassName($obj);
+        }
+        else {
+            // Nuevo! Instancio la clase vacía, pero 1ro me valgo del parametro clase si lo tuviera
+            if( !$clase ) {
+                $this->setError('No se pudo determinar la clase a utilizar en el patron');
+                return false;
+            }
+            $formClassName = $clase.'Form';
+            $form = new $formClassName();
+        }
+
+        $this->setTplParameter( 'form', $form );
     }
 
     public function resume($request)
     {
         // Vuelvo a instanciar lista del parametro
         $xml = $this->getParameter('in_lista');
-        $obj = UtilPsdf::objXmlToInstance($xml);
-        $classname = get_class($obj);
+        $clase = $this->getParameter('in_clase'); // Opcional
 
-        // Recorro campos del formulario y actualizo los modificados
-        foreach( $request->getParameter(UtilPsdf::fromCamelCase($classname)) as
-                    $key=>$value )
-        {
-            if( $obj->$key != $value )
-                $obj->$key = $value;
+        $obj = UtilPsdf::objXmlToInstance($xml);
+
+        if( $obj ) {
+            // Edicion! Instancio la clase form con el objeto
+            $formClassName = get_class($obj).'Form';
+            $form = new $formClassName($obj);
         }
+        else {
+            // Nuevo! Instancio la clase vacía, pero 1ro me valgo del parametro clase si lo tuviera
+            if( !$clase ) {
+                $this->setError('No se pudo determinar la clase a utilizar en el patron');
+                return false;
+            }
+            $formClassName = $clase.'Form';
+            $form = new $formClassName();
+            $obj = $form->getObject();
+        }
+
+        $fields = $request->getParameter($form->getName());
+        // remove CSRF token
+        //unset($fields[$form->getCSRFFieldName]);
+
+        foreach( $fields as $key => $value ) {
+            if( isset($obj->$key) ) {
+                if( $obj->$key != $value ) {
+                    $obj->$key = $value;
+                }
+            }
+        }
+        
+        /* La forma en que trata symfony la grabacion desde el formulario:
+        $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
+        if ($form->isValid()) {
+            $obj = $form->save();
+        } */
 
         // Vuelvo a convertir a xml
         $xml = '<list>';
