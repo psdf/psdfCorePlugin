@@ -79,7 +79,7 @@ FlowDet:
   relations:
     Estado:             { foreignAlias: FlowDet, local: rel_estado, foreign: id, type: one, foreignType: one }
     Flow:               { foreignAlias: FlowDet1, local: rel_flow, foreign: id, type: one, foreignType: many }
-    Usuario:            { foreignAlias: FlowDet2, local: rel_usuario, foreign: id, type: one, foreignType: many }
+    sfGuardUser:        { foreignAlias: FlowDet2, local: rel_usuario, foreign: id, type: one, foreignType: many }
 
 Activity:
   tableName: psdfwf.activity
