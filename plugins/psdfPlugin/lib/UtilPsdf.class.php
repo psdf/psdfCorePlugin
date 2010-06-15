@@ -65,6 +65,53 @@ class UtilPsdf
     throw new sfStopException();
   }
 	  
+  static public function url_for($appName, $moduleName, $actionName, $parametros = null, $segura = false )
+  {
+    //$path = sfContext::getInstance()->getRequest()->getRelativeUrlRoot();
+    // Obtengo el path completo del controlador actual
+    // Ejemplo: http://localhost/test/app1_dev.php
+    $path = sfContext::getInstance()->getRequest()->getUriPrefix().
+    sfContext::getInstance()->getRequest()->getScriptName();
+
+    // Quito la parte del controlador dejando solo la uri
+    // Ejemplo: http://localhost/test
+    $part=strrpos($path, '/');
+    $path=substr($path, 0, $part);
+
+    $path = $path . '/';
+
+    // Agrego el nuevo controlador
+    if (strtolower(sfConfig::get('sf_environment'))=='prod'){
+      $path = $path.$appName.'.php';
+    }
+    else
+    {
+      $path = $path.$appName.'_'.sfConfig::get('sf_environment').'.php';
+    }
+
+    $path = $path .'/';
+    // Concateno el modulo y accion a ejecutar
+
+    $path = $path . $moduleName.'/'.$actionName;
+
+    if ($parametros){
+      //recorro el array de parametros!
+      foreach ($parametros as $key => $value){
+        $path = $path ."/". $key ."/". $value;
+      }
+    }
+
+    // segura, depende si deseo que sea redireccion segura o no
+    if ($segura){
+      $path = str_replace('http://', 'https://', $path);
+    }else{
+      $path = str_replace('https://', 'http://', $path);
+    }
+
+    return $path;
+
+  }
+
   /**
    * Extension a funcion str_replace() de php para que
    * lo haga recursivamente mientras queden ocurrencias
@@ -278,6 +325,77 @@ class UtilPsdf
         fclose($handle);
 
         exit; /* Finaliza el script */
+    }
+
+    /**
+     * Convierte una expresion menu yml a la notación del componente JSCookMenu
+     * Ejemplo de conversion:
+     * ----
+     * macro_name:
+     *   package_name:
+     *     process_name:
+     *       url: { app: sfmacro, mod: sfpackage, acc: sfprocess }
+     *       target: _self
+     *     process2_name:
+     *       url: { app: sfmacro, mod: sfpackage, acc: sfprocess2 }
+     *       target: _self
+     * -----
+     * [
+     *   ['', 'macro_name', '#', '', 'description',   // a folder item
+     *      ['', 'package_name', '#', '', 'description',  // a menu item
+     *               ['', 'process_name', 'sfmacro.php/sfpackage/sfprocess', '_self', 'description'],  // a menu item
+     *               ['', 'Process2_name', 'sfmacro.php/sfpackage/sfprocess2', '_self', 'description']  // a menu item
+     *           ]
+     *       ]
+     *   ]
+     *
+     * @param string $menuYml Notación yml recibida
+     * @return string notación JSCookMenu retornada
+     */
+    static public function convertMenu($menuYml=array()) {
+
+        if( !$menuYml )
+            $menuYml = array();
+        
+        $new = '[';
+
+        // Recorro Macros
+        $mx=0;
+        foreach( $menuYml as $key_ma=>$macro ) {
+            $mx++;
+            if( $mx>1 ) {
+                $new.= ", _cmSplit, ";
+            }
+            $new.= "['', '".$key_ma."', '#', 'target', 'description'";
+
+            // Recorro Paquetes
+            $px=0;
+            foreach( $macro as $key_pa=>$paquete ) {
+                $px++;
+                if( $px==0 ) {
+                    $new.= ", _cmSplit, ";
+                }
+                else {
+                    $new.=', ';
+                }
+                $new.= "['', '".$key_pa."', '#', 'target', 'description'";
+
+                // Recorro Procesos
+                foreach( $paquete as $key_pr=>$proceso ) {
+                    $new.= ", ['', '".$key_pr."', '".self::url_for($proceso['url']['app'],
+                                                                 $proceso['url']['mod'],
+                                                                 $proceso['url']['acc'])."', 'target', 'description']";
+                }
+
+                $new.= "]";
+            }
+
+            $new.= "]";
+        }
+
+        $new.=']';
+        
+        return $new;
     }
 }
 ?>

@@ -24,16 +24,73 @@ body {
 /*  width:1020px; */
 }
 
+/*----------- Menu bar --------------*/
+
+#menu {
+	-moz-border-radius-topleft:7px;
+	-moz-border-radius-topright:7px;
+	-moz-border-radius-bottomleft:7px;
+	-moz-border-radius-bottomright:7px;
+	border: 1px solid #E8E7DD;
+	margin: 0 0 7px 0;
+	padding: 4px;
+/*	width:207px; */
+	overflow: hidden;
+/*	height: 600px; */
+	background-color:#5F5F5F;
+        font-family: Arial, sans-serif;
+        font-size: 11px;
+}
+
+#menu td {
+        font-family: Arial, sans-serif;
+        font-size: 11px;
+}
+
+.menu_userinfo {
+        background-color:#5F5F5F;
+        text-align: right;
+        font-weight:bold;
+        color:#BCC6D5;
+        padding: 0 10px 0 0;
+
+}
+
+.menu_userinfo a:link, .menu_userinfo a:visited {
+        color: #FFFFFF;
+}
+
+.menu h6 {
+	-moz-border-radius-topleft:7px;
+	-moz-border-radius-topright:7px;
+	background-color:#E8E7DD;
+	border-bottom:2px solid #FFFFFF;
+	font-size:14px;
+	font-weight:bold;
+	margin-bottom:0;
+	padding:8px 5px;
+}
+
+.menu_modal {
+	padding:5px;
+	height:555px;
+	overflow:auto;
+}
+
+/*-----------------------------------------------*/
+
+/* OTRO MENU (old)
+
 #menu {
 	background-color: #2d3951;
         color: white;
 	height: 22px;
 }
-
 #menu A:link {text-decoration:none;color:white;}
 #menu A:visited {text-decoration:none;color:white;}
 #menu A:active {text-decoration:none;color:white;}
 #menu A:hover {text-decoration:underline;color:white;}
+*/
 
 .main {
 /*  background-image:url(../images/background_main.png);
