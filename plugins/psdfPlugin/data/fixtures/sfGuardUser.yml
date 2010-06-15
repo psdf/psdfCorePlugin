@@ -1,0 +1,9 @@
+sfGuardUser:
+
+  admin:
+    username: admin
+    password:   admin
+    
+  invitado:
+    username: invitado
+    password:   invitado

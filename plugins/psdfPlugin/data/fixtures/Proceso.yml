@@ -1,0 +1,17 @@
+Proceso:
+
+  Organizacion:
+    nombre: Organizacion
+    Paquete: Psdf
+    xpdl_id: _1
+
+  Unidadorg:
+    nombre: Unidadorg
+    Paquete: Psdf
+    xpdl_id: _2
+
+  Usuario:
+    nombre: sfGuardUser
+    Paquete: Psdf
+    xpdl_id: _3
+
