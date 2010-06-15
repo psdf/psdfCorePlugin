@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<channels:Channels xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:channels="http://www.tibco.com/xpd/presentation/channels/1.0" xmi:id="_PGfxgEeyEd-eq-1NLZ2xQg">
-  <channels xmi:id="_PGfxgUeyEd-eq-1NLZ2xQg" name="DefaultChannel" displayName="Default Channel">
-    <typeAssociations xmi:id="_PGfxgkeyEd-eq-1NLZ2xQg">
-      <channelType href="xpdextension:channelTypes#GIGIPull"/>
-    </typeAssociations>
-  </channels>
-</channels:Channels>
