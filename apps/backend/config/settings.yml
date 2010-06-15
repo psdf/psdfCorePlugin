@@ -36,6 +36,11 @@ all:
 
     enabled_modules:
       - default
+      - sfGuardGroup
+      - sfGuardUser
+      - sfGuardPermission
+      - sfGuardAuth
+      - psdfComponents
       - psdfOrganizacion
       - psdfPaquete
       - psdfProceso
@@ -46,3 +51,9 @@ all:
       - psdfTestPattern
       - psdfDeprueba2
       - psdfDeprueba3
+
+    login_module:           sfGuardAuth
+    login_action:           signin
+
+    secure_module:          sfGuardAuth
+    secure_action:          secure
