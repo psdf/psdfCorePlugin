@@ -6,35 +6,36 @@
     <?php include_title() ?>
     <link rel="shortcut icon" href="/favicon.ico" />
 
-    <?php use_javascript('/ext-js/adapter/ext/ext-base') ?>
-    <?php use_javascript('/ext-js/ext-all') ?>
-    <?php use_javascript('/psdfPlugin/js/psdf_util.js') ?>
+    <?php // librerias del componente menuBar ?>
+    <script type="text/javascript" src="/psdfPlugin/js/JSCookMenu/JSCookMenu.js"></script>
+    <link rel="stylesheet" href="/psdfPlugin/js/JSCookMenu/ThemeGray/theme.css" type="text/css" />
+    <script type="text/javascript" src="/psdfPlugin/js/JSCookMenu/ThemeGray/theme.js"></script>
 
-    <?php //echo stylesheet_tag('../js/ext-js/tutorial/ExtStart') ?>
-    <?php use_stylesheet('/js/ext-js/resources/css/ext-all') ?>
-    <?php use_stylesheet('/js/ext-js/resources/css/xtheme-blue') ?>
+    <?php // Para los templates echos a mano y requieran el formato del sfadmin ?>
     <?php use_stylesheet('/sfDoctrinePlugin/css/global') ?>
     <?php use_stylesheet('/sfDoctrinePlugin/css/default') ?>
 
+    <?php // PSDF ?>
     <?php use_stylesheet('/psdfPlugin/css/psdf') ?>
+    <?php use_javascript('/psdfPlugin/js/psdf_util') ?>
+
+    <?php // El css del ext-js desconfigura el del sfDoctrinePlugin, a por ver las herencias... ?>
+    <?php //use_stylesheet('/../js/ext-js/resources/css/ext-all') ?>
+    <?php //use_javascript('/ext-js/adapter/ext/ext-base') ?>
+    <?php //use_javascript('/ext-js/ext-all-debug') ?>
 
     <?php include_stylesheets() ?>
     <?php include_javascripts() ?>
-
+        
   </head>
   <body>
       <div class="header">
           <div id="logo"></div>
       </div>
 
-      <div id="menu">
-          <?php echo link_to('Organizaciones', 'psdfOrganizacion/index') ?> |
-          <?php echo link_to('Proyectos', 'psdfProyecto/index') ?> |
-          <?php echo link_to('Paquetes', 'psdfPaquete/index') ?> |
-          <?php echo link_to('Procesos', 'psdfProceso/index') ?>
-      </div>
+      <?php include_component('psdfComponents', 'menuBar') ?>
 
-      <div class="main">
+      <div class="main">          
           <?php echo $sf_content ?>
       </div>
 

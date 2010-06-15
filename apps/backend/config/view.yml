@@ -14,7 +14,7 @@ default:
 
   stylesheets:    [ main.css ]
 
-  javascripts:    [ ext-js/adapter/ext/ext-base.js, ext-js/ext-all ]
+  javascripts:    []
 
   has_layout:     true
   layout:         layout
