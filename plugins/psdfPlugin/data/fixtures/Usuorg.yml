@@ -16,6 +16,9 @@ Usuorg:
           Usuario:
             url: { app: backend, mod: sfGuardUser, acc: index }
             target: _self
+          Usuarios en Organizacion:
+            url: { app: backend, mod: psdfUsuorg, acc: index }
+            target: _self
           Proyecto:
             url: { app: backend, mod: psdfProyecto, acc: index }
             target: _self

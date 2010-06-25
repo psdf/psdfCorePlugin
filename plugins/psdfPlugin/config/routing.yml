@@ -71,3 +71,12 @@ proyecto_proyecto:
     prefix_path:          psdfProyecto
     column:               id
     with_wildcard_routes: true
+
+usuorg_usuorg:
+  class: sfDoctrineRouteCollection
+  options:
+    model:                Usuorg
+    module:               psdfUsuorg
+    prefix_path:          psdfUsuorg
+    column:               id
+    with_wildcard_routes: true

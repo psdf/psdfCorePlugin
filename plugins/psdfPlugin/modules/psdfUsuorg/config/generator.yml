@@ -1,0 +1,23 @@
+generator:
+  class: sfDoctrineGenerator
+  param:
+    model_class:           Usuorg
+    theme:                 admin
+    non_verbose_templates: true
+    with_show:             false
+    singular:              ~
+    plural:                ~
+    route_prefix:          usuorg_usuorg
+    with_doctrine_route:   1
+
+    config:
+      actions: ~
+      fields:
+        sfGuardUser:     { label: Usuario }
+        menu:            { attributes: { style: "width: 450px; height: 300px" } }
+      list:
+        display:           [sfGuardUser, organizacion, menu]
+      filter:  ~
+      form:    ~
+      edit:    ~
+      new:     ~

@@ -42,6 +42,7 @@ all:
       - sfGuardAuth
       - psdfComponents
       - psdfOrganizacion
+      - psdfUsuorg
       - psdfPaquete
       - psdfProceso
       - psdfResumen
