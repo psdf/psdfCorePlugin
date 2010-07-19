@@ -1,6 +1,6 @@
 <?php
 
-class initializeTask extends sfBaseTask
+class psdfInitializeTask extends sfBaseTask
 {
   public function configure()
   {
