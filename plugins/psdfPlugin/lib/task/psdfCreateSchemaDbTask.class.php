@@ -10,9 +10,7 @@ class psdfCreateSchemaDbTask extends sfBaseTask
 
     $this->addArgument('nombre', sfCommandArgument::REQUIRED, 'Nombre del Schema a crear');
 
-    $this->addOption( 'connection', null,
-                      sfCommandOption::PARAMETER_REQUIRED,
-                      'Nombre del a conexión', 'psdf');
+    $this->addOption( 'connection', null, sfCommandOption::PARAMETER_REQUIRED, 'Nombre de la conexión (default psdf)', 'psdf');
   }
 
   public function execute($arguments = array(), $options = array())
