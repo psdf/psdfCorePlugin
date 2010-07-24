@@ -10,8 +10,10 @@ CREATE TABLE psdfwf.paquete (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, x
 CREATE TABLE psdfwf.picture (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, rel_paquete BIGINT, PRIMARY KEY(id));
 CREATE TABLE psdfwf.proceso (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, rel_paquete BIGINT, imagen VARCHAR(30), xpdl_id VARCHAR(30) NOT NULL UNIQUE, PRIMARY KEY(id));
 CREATE TABLE psdforg.proyecto (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, rel_organizacion BIGINT, PRIMARY KEY(id));
+CREATE TABLE psdform.psdf_class (id BIGSERIAL, name VARCHAR(30) NOT NULL UNIQUE, rel_schema BIGINT, PRIMARY KEY(id));
+CREATE TABLE psdform.psdf_connection (id BIGSERIAL, name VARCHAR(30) NOT NULL UNIQUE, PRIMARY KEY(id));
+CREATE TABLE psdform.psdf_schema (id BIGSERIAL, name VARCHAR(30) NOT NULL UNIQUE, rel_connection BIGINT, PRIMARY KEY(id));
 CREATE TABLE psdforg.unidadorg (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, rel_organizacion BIGINT, PRIMARY KEY(id));
-CREATE TABLE psdforg.usuario (id BIGSERIAL, nombre VARCHAR(30) NOT NULL UNIQUE, pass VARCHAR(30) NOT NULL UNIQUE, PRIMARY KEY(id));
 CREATE TABLE psdforg.usuorg (id BIGSERIAL, menu TEXT, state BOOLEAN DEFAULT 'true' NOT NULL, rel_organizacion BIGINT, rel_usuario BIGINT, rel_proceso BIGINT, PRIMARY KEY(id));
 CREATE TABLE sf_guard_group (id SERIAL, name VARCHAR(255) UNIQUE, description VARCHAR(1000), created_at TIMESTAMP NOT NULL, updated_at TIMESTAMP NOT NULL, PRIMARY KEY(id));
 CREATE TABLE sf_guard_group_permission (group_id INT, permission_id INT, created_at TIMESTAMP NOT NULL, updated_at TIMESTAMP NOT NULL, PRIMARY KEY(group_id, permission_id));
@@ -32,6 +34,8 @@ ALTER TABLE psdfwf.paquete ADD CONSTRAINT psdfwf_paquete_rel_macro_psdfwf_macro_
 ALTER TABLE psdfwf.picture ADD CONSTRAINT psdfwf_picture_rel_paquete_psdfwf_paquete_id FOREIGN KEY (rel_paquete) REFERENCES psdfwf.paquete(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE psdfwf.proceso ADD CONSTRAINT psdfwf_proceso_rel_paquete_psdfwf_paquete_id FOREIGN KEY (rel_paquete) REFERENCES psdfwf.paquete(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE psdforg.proyecto ADD CONSTRAINT psdforg_proyecto_rel_organizacion_psdforg_organizacion_id FOREIGN KEY (rel_organizacion) REFERENCES psdforg.organizacion(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE psdform.psdf_class ADD CONSTRAINT psdform_psdf_class_rel_schema_psdform_psdf_schema_id FOREIGN KEY (rel_schema) REFERENCES psdform.psdf_schema(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
+ALTER TABLE psdform.psdf_schema ADD CONSTRAINT psdform_psdf_schema_rel_connection_psdform_psdf_connection_id FOREIGN KEY (rel_connection) REFERENCES psdform.psdf_connection(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE psdforg.unidadorg ADD CONSTRAINT psdforg_unidadorg_rel_organizacion_psdforg_organizacion_id FOREIGN KEY (rel_organizacion) REFERENCES psdforg.organizacion(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE psdforg.usuorg ADD CONSTRAINT psdforg_usuorg_rel_usuario_sf_guard_user_id FOREIGN KEY (rel_usuario) REFERENCES sf_guard_user(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
 ALTER TABLE psdforg.usuorg ADD CONSTRAINT psdforg_usuorg_rel_proceso_psdfwf_proceso_id FOREIGN KEY (rel_proceso) REFERENCES psdfwf.proceso(id) NOT DEFERRABLE INITIALLY IMMEDIATE;
