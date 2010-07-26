@@ -366,7 +366,7 @@ class UtilPsdf
             if( $mx>1 ) {
                 $new.= ", _cmSplit, ";
             }
-            $new.= "['', '".$key_ma."', '#', 'target', 'description'";
+            $new.= "['', '".$key_ma."', '#', '', 'description'";
 
             // Recorro Paquetes
             $px=0;
@@ -378,13 +378,13 @@ class UtilPsdf
                 else {
                     $new.=', ';
                 }
-                $new.= "['', '".$key_pa."', '#', 'target', 'description'";
+                $new.= "['', '".$key_pa."', '#', '', 'description'";
 
                 // Recorro Procesos
                 foreach( $paquete as $key_pr=>$proceso ) {
                     $new.= ", ['', '".$key_pr."', '".self::url_for($proceso['url']['app'],
                                                                  $proceso['url']['mod'],
-                                                                 $proceso['url']['acc'])."', 'target', 'description']";
+                                                                 $proceso['url']['acc'])."', '".$proceso['target']."', 'description']";
                 }
 
                 $new.= "]";
