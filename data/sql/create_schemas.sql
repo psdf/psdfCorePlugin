@@ -1,3 +1,0 @@
-CREATE SCHEMA psdforg;
-CREATE SCHEMA psdform;
-CREATE SCHEMA psdfwf;
