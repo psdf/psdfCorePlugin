@@ -10,7 +10,7 @@
 
       <ul>
       <?php foreach( $error as $err ): ?>
-          <li><?php echo $err ?></li>
+          <li><?php echo $err['error'] ?></li>
       <?php endforeach; ?>
       </ul>
 

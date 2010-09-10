@@ -35,7 +35,7 @@ class psdfGenerateActivity {
         $filesystem = new sfFilesystem();
 
         if( !is_dir($actionDir) ) {
-            throw new sfCommandException(sprintf('No se pudo identificar el modulo symfony del paquete en cuestion'));
+            throw new sfCommandException(sprintf("No se pudo identificar el modulo symfony '%s' implementacion del paquete '%s'", $actionDir, $module));
         }
         if (is_file($actionDir.'/'.$actionFile)) {
             // Borro el archivo porque lo voy a recrear

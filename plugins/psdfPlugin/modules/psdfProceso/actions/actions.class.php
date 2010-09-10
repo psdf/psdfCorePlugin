@@ -18,7 +18,7 @@ class psdfProcesoActions extends autoPsdfProcesoActions
     // Se construye desde el paquete por eso primero instancio el proceso 
   	
     $proc = Doctrine::getTable('Proceso')->find($request->getParameter('id'));
-    $proc->getPaquete()->build( $request->getParameter('id') );
+    $proc->getPaquete()->build( array($request->getParameter('id')) );
     $this->redirect($this->getModuleName().'/index');
   }
 

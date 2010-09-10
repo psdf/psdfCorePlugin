@@ -55,21 +55,17 @@ class psdfLoadDataDbTask extends sfDoctrineBaseTask
 
     // Recorro clases definidas en el schema
 
-    // Copy/paste de sfDoctrineBuildModeltask.class.php
-    $config = $this->getCliConfig();
-    //$builderOptions = $this->configuration->getPluginConfiguration('sfDoctrinePlugin')->getModelBuilderOptions();
-    //$stubFinder = sfFinder::type('file')->prune('base')->name('*'.$builderOptions['suffix']);
-    //$before = $stubFinder->in($config['models_path']);
-    $schema = $this->prepareSchemaFile($config['yaml_schema_path']);
+    $config = $this->getCliConfig(); // sfDoctrineBuildModeltask.class.php
+    $schema = $this->prepareSchemaFile($config['yaml_schema_path']); // Idem
 
-    foreach (sfYaml::load($schema) as $model => $definition) {
-        // Determino nombre del esquema
+    foreach ( sfYaml::load($schema) as $model => $definition) {
+        // Determino nombre del esquema (default public)
+        $schema_name = 'public';
         if( isset($definition['tableName']) ) {
             $part = explode('.', $definition['tableName']);
-            $schema_name = $part[0];
-        }
-        else {
-            $schema_name = 'public';
+            if( count($part)==2 ) {
+                $schema_name = $part[0];
+            }
         }
 
         // Creo objeto clase si no existiese

@@ -3,12 +3,12 @@ connection: psdf
 PsdfConnection:
   tableName: psdform.psdf_connection
   columns:
-    name:             { type: varchar(30), notnull: true, unique: true }
+    name:             { type: varchar(50), notnull: true, unique: true }
 
 PsdfSchema:
   tableName: psdform.psdf_schema
   columns:
-    name:             { type: varchar(30), notnull: true, unique: true }
+    name:             { type: varchar(50), notnull: true, unique: true }
     rel_connection:   { type: integer }
   relations:
     PsdfConnection:   { foreignAlias: psdfconnection, local: rel_connection, foreign: id, type: one, foreignType: many }
@@ -16,7 +16,7 @@ PsdfSchema:
 PsdfClass:
   tableName: psdform.psdf_class
   columns:
-    name:             { type: varchar(30), notnull: true, unique: true }
+    name:             { type: varchar(50), notnull: true, unique: true }
     rel_schema:       { type: integer }
   relations:
     PsdfSchema:   { foreignAlias: psdfschema, local: rel_schema, foreign: id, type: one, foreignType: many }

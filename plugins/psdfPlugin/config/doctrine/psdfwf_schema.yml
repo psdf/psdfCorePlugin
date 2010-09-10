@@ -28,6 +28,7 @@ Proceso:
     rel_paquete:        { type: integer }
     imagen:             { type: string(30) }
     xpdl_id:            { type: string(30), notnull: true, unique: true }
+    implementado:       { type: boolean, default: false }
   relations:
     Paquete:            { foreignAlias: Procesos, local: rel_paquete, foreign: id, type: one, foreignType: many }
 

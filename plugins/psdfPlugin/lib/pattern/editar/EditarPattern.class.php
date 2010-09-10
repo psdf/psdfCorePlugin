@@ -91,12 +91,12 @@ class EditarPattern extends BasePattern
 
         foreach( $fields as $key => $value ) {
             if( isset($obj->$key) ) {
-                if( $obj->$key != $value ) {
+                if( ucfirst($key)!='Id' and $obj->$key != $value ) {
                     $obj->$key = $value;
                 }
             }
         }
-        
+        die('');
         /* La forma en que trata symfony la grabacion desde el formulario:
         $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
         if ($form->isValid()) {

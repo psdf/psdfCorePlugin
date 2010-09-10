@@ -1,0 +1,36 @@
+COPYRIGHTS
+==========
+
+PSDF
+----
+
+Url:       http://www.proyecto-psdf.com.ar
+Copyright: Soltic
+License:   GNU GPL v3
+
+symfony
+-------
+
+PSDF uses the symfony software
+
+Url:       http://www.symfony-project.com/
+Copyright: Fabien Potencier
+License:   MIT - see LICENSE file
+
+TIBCO Studio Community Edition
+------------------------------
+
+PSDF uses the TIBCO Studio Community Edition software
+
+Url:       http://www.tibco.com/devnet/index.html
+Copyright: Copyright (C) 2004 - 2009 TIBCO Software Inc. ALL RIGHTS RESERVED.
+License:   see LICENSE TIBCO file
+
+Ext JS - JavaScript Library
+---------------------------
+
+PSDF uses the Ext JS - JavaScript Library
+
+Url:       http://extjs.com
+Copyright: Copyright (c) 2006-2009, Ext JS, LLC
+License:   see http://extjs.com

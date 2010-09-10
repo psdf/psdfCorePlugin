@@ -4,6 +4,8 @@ class ##ACTIVITY##Action extends sfAction
 {
   public function execute($request)
   {
+    ##NOT_IMPLEMENT_REDIRECT##
+
     // Nuevo flujo, nueva instancia
     $this->f = new Flow();
     
