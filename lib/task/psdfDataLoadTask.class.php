@@ -1,12 +1,12 @@
 <?php
 
-class psdfLoadDataDbTask extends sfDoctrineBaseTask
+class psdfDataLoadTask extends sfDoctrineBaseTask
 {
   public function configure()
   {
     $this->namespace = 'psdf';
-    $this->name      = 'load-data-db';
-    $this->briefDescription    = 'Carga datos iniciales (Connect, Schema y Class';
+    $this->name      = 'data-load';
+    $this->briefDescription    = 'Carga datos iniciales (Connect, Schema y Class)';
 
     $this->addOption( 'connection', null, sfCommandOption::PARAMETER_REQUIRED, 'Nombre de la conexión (default psdf)', 'psdf');
 
