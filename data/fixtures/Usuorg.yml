@@ -11,22 +11,22 @@ Usuorg:
       PSDF:
         Administracion:
           Organizacion:
-            url: { app: backend, mod: psdfOrganizacion, acc: index }
+            url: { app: psdf, mod: psdfOrganizacion, acc: index }
             target: _self
           Usuario:
-            url: { app: backend, mod: sfGuardUser, acc: index }
+            url: { app: psdf, mod: sfGuardUser, acc: index }
             target: _self
           Usuarios en Organizacion:
-            url: { app: backend, mod: psdfUsuorg, acc: index }
+            url: { app: psdf, mod: psdfUsuorg, acc: index }
             target: _self
           Proyecto:
-            url: { app: backend, mod: psdfProyecto, acc: index }
+            url: { app: psdf, mod: psdfProyecto, acc: index }
             target: _self
           Paquete:
-            url: { app: backend, mod: psdfPaquete, acc: index }
+            url: { app: psdf, mod: psdfPaquete, acc: index }
             target: _self
           Proceso:
-            url: { app: backend, mod: psdfProceso, acc: index }
+            url: { app: psdf, mod: psdfProceso, acc: index }
             target: _self
     state: true
     Organizacion: Orgdemo
