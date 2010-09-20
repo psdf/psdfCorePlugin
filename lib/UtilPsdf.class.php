@@ -82,7 +82,12 @@ class UtilPsdf
 
     // Agrego el nuevo controlador
     if (strtolower(sfConfig::get('sf_environment'))=='prod'){
-      $path = $path.$appName.'.php';
+      if( file_exists(sfConfig::get('sf_web_dir').DIRECTORY_SEPARATOR.$appName.'.php') ) {
+        $path = $path.$appName.'.php';
+      }
+      else {
+        $path = $path.'index.php';
+      }
     }
     else
     {
