@@ -1,4 +1,4 @@
-<?php use_javascript('/psdfPlugin/js/psdf_util') ?> 
+<?php use_javascript('/psdfCorePlugin/js/psdf_util') ?> 
 
 <?php /*echo javascript_tag("
 
