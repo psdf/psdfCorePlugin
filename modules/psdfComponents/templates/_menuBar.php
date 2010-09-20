@@ -2,33 +2,7 @@
 </style>
 
 <script type="text/javascript">
-    /* Un ejemplo de myMenu:
-      myMenu =
-        [
-            ['', 'HomE', '/index.php', 'target', 'description'],  // a menu item
-            _cmSplit,
-            ['', 'Menu1', '#', 'target', 'description'],  // a menu item
-            ['', 'Menu2', '#', 'target', 'description'],  // a menu item
-            _cmSplit,
-            ['', 'Menu3', '#', 'target', 'description',   // a folder item
-                ['', 'Submenu31', 'url31.php', 'target', 'description'],  // a menu item
-                ['', 'Submenu32', 'url32.php', 'target', 'description']  // a menu item
-            ],
-            _cmSplit,
-            ['', 'Menu4', '#', 'target', 'description',   // a folder item
-                ['', 'Submenu41', 'url41.php', 'target', 'description'],  // a menu item
-                ['', 'Submenu42', 'url42.php', 'target', 'description']  // a menu item
-            ],
-            _cmSplit,
-            ['', 'Macro', '#', 'target', 'description',   // a folder item
-                ['', 'Paquete', '#', 'target', 'description',  // a menu item
-                    ['', 'Proceso1', 'url41.php', 'target', 'description'],  // a menu item
-                    ['', 'Proceso2', 'url42.php', 'target', 'description']  // a menu item
-                ]
-            ]
-        ]
-     */
-    var myMenu = <?php echo $menu ?>;
+    var myMenu = <?php echo htmlspecialchars_decode($menu, ENT_QUOTES) ?>;
 </script>
 
 <div id="menu">
