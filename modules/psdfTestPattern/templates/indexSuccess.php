@@ -1,6 +1,6 @@
 <?php use_helper('Form') ?>
 
-<?php use_javascript('/psdfPlugin/js/psdf_util') ?>
+<?php use_javascript('/psdfCorePlugin/js/psdf_util') ?>
 <?php use_stylesheet('/sfDoctrinePlugin/css/global.css', 'first') ?>
 <?php use_stylesheet('/sfDoctrinePlugin/css/default.css', 'first') ?>
 
