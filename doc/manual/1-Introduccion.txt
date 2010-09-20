@@ -1,5 +1,0 @@
-# Introduccion
-
-![Alt text](/images/control.png)
-
-...
