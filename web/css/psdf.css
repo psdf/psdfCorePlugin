@@ -17,7 +17,7 @@ body {
 
 .header {
   background-color: #2d3951;
-  background-image: url(/../psdfPlugin/images/logo_psdf.jpg);
+  background-image: url(/../psdfCorePlugin/images/logo_psdf.jpg);
   background-repeat: no-repeat;
   height:60px;
   position:relative;
