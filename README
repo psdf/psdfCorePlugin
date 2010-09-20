@@ -1,7 +1,166 @@
-PSDF es un entorno de trabajo o framework, orientado a la elaboración de soluciones integrales de gestión organizacional, incluyendo la construcción y ensamblado de sistemas complejos, con características alineadas a los Portales Web 4.0 (incorpora las tecnologías planteadas por las anteriores Web 1,2 y 3.0 e incorpora el uso desde dispositivos móviles – celulares , etc), y las Suites de Gestión de Procesos de Negocios (o BPMS) que contienen un alto grado de trazabilidad de las actividades que se ejecutan en su organización.
+psdfCorePlugin
+==============
 
-LICENSE
+psdfCorePlugin es un paquete que integra la construcción, publicación y ejecución de procesos modelados
+y diseñados en notación BMPN y almacenados en el estandar XPDL. La construcción implica generar codigo
+PHP sobre el framework Symfony respetando su estructura, es decir en aplicaciones, modulos y acciones.
+
+Los procesos se diseñan con la herramienta Tibco Business Studio Community Edition
+(http://developer.tibco.com/business_studio/default.jsp) en su version 3.2.0
+
+Mas informacion en http://proyecto-psdf.com.ar
+
+Dependencias
+============
+
+psdfCorePlugin utiliza el plugin sfDoctrineGuardPlugin. En la guia de instalación se indica como instalarlo.
+
+Instalación y Configuracion
+===========================
+
+Con un proyecto desde cero
+---------------------
+
+* Crear la carpeta del proyecto
+
+        $ mkdir [carpeta_proyecto]
+
+* Descargar y descomprimir symfony en su version 1.4 mas reciente
+
+        $ cd [carpeta_proyecto]
+        $ mkdir -p lib/vendor
+        $ cd lib/vendor
+        $ tar -zxvf symfony-1.4.X.tgz
+        $ mv symfony-1.4.X symfony
+
+* Descargar y descomprimir los plugins psdfCorePlugin y sfDoctrineGuardPlugin en la carpeta /plugins del proyecto
+
+        $ cd [carpeta_proyecto]
+        $ mkdir plugins
+        $ cd plugins
+        $ tar -zxvf psdfCorePlugin.tar.gz .
+        $ tar -zxvf sfDoctrineGuardPlugin-5.X.XX.tgz .
+
+* Crear el projecto con el instalador psdf
+
+        $ php lib/vendor/symfony/data/bin/symfony generate:project PROJECT_NAME --installer=plugins/psdfCorePlugin/data/bin/installer.php
+        $ php symfony psdf:initialize
+
+En un proyecto existente
+------------------------
+
+* Descargar y descomprimir los plugins psdfCorePlugin y sfDoctrineGuardPlugin en la carpeta /plugins del proyecto
+
+        $ cd [carpeta_proyecto]/plugins
+        $ tar -zxvf psdfCorePlugin.tar.gz .
+        $ tar -zxvf sfDoctrineGuardPlugin-5.X.XX.tgz .
+
+* Habilitar los plugins en 'config/ProjectConfiguration.class.php':
+
+        class ProjectConfiguration extends sfProjectConfiguration
+        {
+            public function setup()
+            {
+                $this->enablePlugins( array( 'sfDoctrinePlugin',
+                                             'psdfCorePlugin',
+                                             'sfDoctrineGuardPlugin' ) );
+            }
+        }
+
+* Corregir permisos necesarios
+
+        $php symfony psdf:permissions
+
+* Crear un aplicativo denominado 'psdf':
+
+        $ php symfony generate:app psdf
+
+* Reconstruir el modelo
+
+        $ cd [carpeta_proyecto]
+        $ php symfony doctrine-build-model
+        $ php symfony doctrine-build-sql
+        $ php symfony doctrine-build-forms
+        $ php symfony doctrine-build-filters
+
+* Definir los esquemas iniciales necesarios por el psdf en la conexion por defecto en 'config/databases.yml':
+
+        all:
+          doctrine:
+            class: sfDoctrineDatabase
+            param:
+              dsn: 'pgsql:host=localhost;dbname=XXXX'
+              username: XXXX
+              password: XXXX
+            schemas:    [ psdfwf, psdform, psdforg ]
+
+* Crear los esquemas iniciales necesarios en la conexion por defecto:
+
+        $ php symfony psdf:create-schema-db --connection="doctrine" psdforg
+        $ php symfony psdf:create-schema-db --connection="doctrine" psdform
+        $ php symfony psdf:create-schema-db --connection="doctrine" psdfwf
+
+  Si la tarea falla porque el usuario de la conexion no tiene los privilegios suficientes,
+  pueden crearse los esquemas directamente sobre la base de datos.
+
+* Crear las tablas:
+
+        $ php symfony doctrine:insert-sql
+
+  Si la tarea falla porque el usuario de la conexion no tiene los privilegios suficientes,
+  pueden usarse las sentencias SQL generadas en 'data/sql'
+
+* Cargar los datos iniciales
+
+        $ php symfony psdf:load-data-db
+        $ php symfony doctrine:data-load
+
+* Habilitar modulos necesarios en la application en /apps/psdf/config/settings.yml
+
+        all:
+          .settings:
+            enabled_modules:
+              - default
+              - sfGuardGroup
+              - sfGuardUser
+              - sfGuardPermission
+              - sfGuardAuth
+              - psdfComponents
+              - psdfOrganizacion
+              - psdfUsuorg
+              - psdfPaquete
+              - psdfProceso
+              - psdfProyecto
+
+* Cambiar el default login and secure modules en 'apps/psdf/config/settings.yml`
+
+        login_module:           sfGuardAuth
+        login_action:           signin
+
+        secure_module:          sfGuardAuth
+        secure_action:          secure
+
+* Cambiar la superclase en 'apps/psdf/lib/myUser.class.php'
+
+        class myUser extends psdfUser
+        {
+        }
+
+* Publicar recursos web de los plugins
+
+        $ php symfony plugin:publish-assets psdfCorePlugin
+        $ php symfony plugin:publish-assets sfDoctrineGuardPlugin
+
+* Limpiar la cache
+
+        $ php symfony cc
+
+Contact
 -------
 
-ver archivo LICENSE
+* Proyecto PSDF, [http://www.proyecto-psdf.com.ar](http://www.proyecto-psdf.com.ar)
 
+Log de cambios
+---------
+
+* Version Alfa
