@@ -17,7 +17,8 @@ class psdfGenerateMacroTask extends sfBaseTask
     // Creo el aplicativo correspondiente
     // --------------------------------
 
-    $this->runTask('generate:app', array($arguments['macro']));
+    $task = new sfGenerateAppTask($this->dispatcher, $this->formatter);
+    $task->run(array($arguments['macro']), array());
 
     // --------------------------------
     // Personalizacion comun a todos los macros
@@ -30,8 +31,11 @@ class psdfGenerateMacroTask extends sfBaseTask
     // Layout redefinido
     $this->getFilesystem()->copy($skeletonDir.'/app/templates/layout.php', $appDir.'/templates/layout.php', array("override"=>true));
 
+    $emTask = new psdfEnabledModuleTask($this->dispatcher, $this->formatter);
+
     // Modulo seguridad sfDoctrineGuardPlugin
-    $this->runTask('psdf:enabled-module', array('sfGuardAuth', $arguments['macro']));
+    $emTask->run(array('sfGuardAuth', $arguments['macro']), array());
+
     $file = sfConfig::get('sf_apps_dir').DIRECTORY_SEPARATOR.$arguments['macro'].DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'settings.yml';
     if(file_exists($file)) {
         $config = sfYaml::load( $file );
@@ -43,8 +47,8 @@ class psdfGenerateMacroTask extends sfBaseTask
     }
 
     // Modulos del psdf
-    $this->runTask('psdf:enabled-module', array('default', $arguments['macro']));
-    $this->runTask('psdf:enabled-module', array('psdfComponents', $arguments['macro']));
+    $emTask->run(array('default', $arguments['macro']), array());
+    $emTask->run(array('psdfComponents', $arguments['macro']), array());
 
     // --------------------------------
     // Personalizacion particular del macro (debería leer de alguna configuracion)
@@ -52,15 +56,15 @@ class psdfGenerateMacroTask extends sfBaseTask
     
     // Modulos administracion sfDoctrineGuardPlugin y psdfCorePlugin para el macro psdf
     if( $arguments['macro']=='psdf' ) {
-        $this->runTask('psdf:enabled-module', array('sfGuardGroup', $arguments['macro']));
-        $this->runTask('psdf:enabled-module', array('sfGuardUser', $arguments['macro']));
-        $this->runTask('psdf:enabled-module', array('sfGuardPermission', $arguments['macro']));
+        $emTask->run(array('sfGuardGroup', $arguments['macro']));
+        $emTask->run(array('sfGuardUser', $arguments['macro']));
+        $emTask->run(array('sfGuardPermission', $arguments['macro']));
 
-        $this->runTask('psdf:enabled-module', array('psdfOrganizacion', $arguments['macro']));
-        $this->runTask('psdf:enabled-module', array('psdfUnidadorg', $arguments['macro']));
-        $this->runTask('psdf:enabled-module', array('psdfProyecto', $arguments['macro']));
-        $this->runTask('psdf:enabled-module', array('psdfPaquete', $arguments['macro']));
-        $this->runTask('psdf:enabled-module', array('psdfProceso', $arguments['macro']));
+        $emTask->run(array('psdfOrganizacion', $arguments['macro']));
+        $emTask->run(array('psdfUnidadorg', $arguments['macro']));
+        $emTask->run(array('psdfProyecto', $arguments['macro']));
+        $emTask->run(array('psdfPaquete', $arguments['macro']));
+        $emTask->run(array('psdfProceso', $arguments['macro']));
     }
 
   }
