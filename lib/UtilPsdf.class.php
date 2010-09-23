@@ -402,5 +402,20 @@ class UtilPsdf
         
         return $new;
     }
+
+    /**
+     * Ejecuta una tarea symfony, puede ser llamada desde el Controlador o Modelo.
+     * @param <type> $class_name
+     * @param <type> $arguments
+     * @param <type> $options
+     */
+    public static function runTask($class_name, $arguments = array(), $options = array())
+    {
+        $dispatcher = sfContext::getInstance()->getEventDispatcher();
+        $formatter = new sfFormatter();
+        $task = new $class_name($dispatcher, $formatter);
+        chdir(sfConfig::get('sf_root_dir'));
+        $task->run($arguments, $options);
+    }
 }
 ?>
