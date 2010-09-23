@@ -37,12 +37,7 @@ abstract class PluginMacro extends BaseMacro {
      * Implementa el macro como un aplicativo symfony
      */
     public function implement() {
-        $arguments['application'] = $this->parseImplementationName();
-        $options['csrf-secret'] = 'UniqueSecret';
-        $options['escaping-strategy'] = 'true';
-        $app = new psdfGenerateApp();
-        $app->execute($arguments, $options);
-        unset($app);
+        UtilPsdf::runTask('psdfGenerateMacroTask', array($this->parseImplementationName()));
     }
 
     public function parseImplementationName() {
