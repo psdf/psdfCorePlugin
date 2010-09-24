@@ -123,13 +123,9 @@ abstract class PluginPaquete extends BasePaquete {
      *
      * @return unknown_type
      */
-    public function implement() {  
-        $arguments['application'] = $this->getMacro()->parseImplementationName();
-        $arguments['module'] = $this->parseImplementationName();
-        $options = array();
-        $app = new psdfGeneratePackage();
-        $app->execute($arguments, $options);
-        unset($app);
+    public function implement() {
+        UtilPsdf::runTask('psdfGeneratePackageTask', array($this->getMacro()->parseImplementationName(),
+                                                     $this->parseImplementationName()));
     }
 
 /**
