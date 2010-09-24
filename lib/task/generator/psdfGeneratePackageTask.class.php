@@ -14,15 +14,26 @@ class psdfGeneratePackageTask extends sfBaseTask
 
   public function execute($arguments = array(), $options = array())
   {
+    // --------------------------------
     // Creo el modulo correspondiente
+    // --------------------------------
 
-    $this->runTask('generate:module', array($arguments['macro'], $arguments['package']));
+    $task = new sfGenerateModuleTask($this->dispatcher, $this->formatter);
+    $task->run(array($arguments['macro'], $arguments['package']), array());
 
+    // --------------------------------
     // Personalizacion comun a todos los paquetes
+    // --------------------------------
 
-    // ...
+    $moduleDir = sfConfig::get('sf_apps_dir').'/'.$arguments['macro'].'/modules/'.$arguments['package'];
+    // Elimino el action y template por default de symfon
+    // (luego se iran creando por cada tarea del proceso)
+    $this->getFilesystem()->remove($moduleDir.'/actions/actions.class.php');
+    $this->getFilesystem()->remove($moduleDir.'/templates/indexSuccess.php');
 
-    // Personalizacion particular del paquete
+    // --------------------------------
+    // Personalizacion particular del macro (debería leer de alguna configuracion del paquete)
+    // --------------------------------
 
     // ...
   }
