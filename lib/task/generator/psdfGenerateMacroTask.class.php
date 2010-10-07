@@ -4,15 +4,17 @@ class psdfGenerateMacroTask extends sfBaseTask
 {
   public function configure()
   {
-    $this->namespace = 'psdf';
-    $this->name      = 'generate-macro';
-    $this->briefDescription    = 'Genera un nuevo Macro PSDF';
+    //$this->namespace = 'psdf';
+    //$this->name      = 'generate-macro';
+    //$this->briefDescription    = 'Genera un nuevo Macro PSDF';
 
     $this->addArgument('macro', sfCommandArgument::REQUIRED, 'Nombre del Macro');
   }
 
   public function execute($arguments = array(), $options = array())
   {
+    $this->logSection('psdf:generate-macro', sprintf("Generando macro '%s'...", $arguments['macro']));
+
     // --------------------------------
     // Creo el aplicativo correspondiente
     // --------------------------------
@@ -66,6 +68,8 @@ class psdfGenerateMacroTask extends sfBaseTask
         $emTask->run(array('psdfPaquete', $arguments['macro']));
         $emTask->run(array('psdfProceso', $arguments['macro']));
     }
+
+    $this->logSection('psdf', sprintf('Generando macro %s... Ok!', $arguments['macro']));
 
   }
 }

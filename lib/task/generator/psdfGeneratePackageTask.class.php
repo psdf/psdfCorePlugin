@@ -4,9 +4,9 @@ class psdfGeneratePackageTask extends sfBaseTask
 {
   public function configure()
   {
-    $this->namespace = 'psdf';
-    $this->name      = 'generate-package';
-    $this->briefDescription    = 'Genera un nuevo Paquete PSDF';
+    //$this->namespace = 'psdf';
+    //$this->name      = 'generate-package';
+    //$this->briefDescription    = 'Genera un nuevo Paquete PSDF';
 
     $this->addArgument('macro', sfCommandArgument::REQUIRED, 'Nombre del Macro');
     $this->addArgument('package', sfCommandArgument::REQUIRED, 'Nombre del Paquete');
@@ -14,6 +14,8 @@ class psdfGeneratePackageTask extends sfBaseTask
 
   public function execute($arguments = array(), $options = array())
   {
+    $this->logSection('psdf:generate-package', sprintf("Generando paquete '%s'...", $arguments['package']));
+
     // --------------------------------
     // Creo el modulo correspondiente
     // --------------------------------

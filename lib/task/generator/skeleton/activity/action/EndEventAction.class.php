@@ -1,6 +1,6 @@
 <?php
 
-class ##ACTIVITY##Action extends sfAction
+class ##ACTION##Action extends sfAction
 {
   public function execute($request)
   {
