@@ -19,7 +19,7 @@ class psdfBuildPackageTask extends sfBaseTask {
             throw new sfCommandException(sprintf('No existe el archivo "%s".', $file));
         }
 
-        $xpdl = new Xpdl($file);
+        $xpdl = new psdfXpdl($file);
         if (!$xpdl) {
             throw new sfCommandException(sprintf('No se pudo cargar xpdl "%s".', $file));
         }

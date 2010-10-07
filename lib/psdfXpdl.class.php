@@ -1,6 +1,21 @@
 <?php
 
-class Xpdl {
+/*
+ * This file is part of the psdfCore package.
+ * (c) 2009-2010 Soltic S.R.L. <contacto@proyecto-psdf.com.ar>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/**
+ * psdfXpdl es una clase para el tratamiento de un documento xpdl
+ *
+ * @package    psdfCore
+ * @subpackage
+ * @author     Gustavo Earnshaw <gustavoear@gmail.com>
+ */
+class psdfXpdl {
 
     var $xml = null;
     var $xp = null;
@@ -10,6 +25,25 @@ class Xpdl {
     const EXTENDED_PACKAGE = '1';
     const EXTENDED_PROCESS = '2';
     const EXTENDED_ACTIVITY = '3';
+
+    const TRANSITION_CONDITION = 'CONDITION';
+    const TRANSITION_OTHERWISE = 'OTHERWISE';
+
+    // Tipos de eventos bpmn soportados
+    const EVENT_START = 'StartEvent';
+    const EVENT_INTERMEDIATE = 'IntermediateEvent';
+    const EVENT_END = 'EndEvent';
+
+    // Tipos de tareas bpmn soportados
+    const TASK_USER = 'TaskUser';
+    const TASK_MANUAL = 'TaskManual';
+    const TASK_SCRIPT = 'TaskScript';
+
+    // Tipos de tareas bpmn soportados
+    const GATEWAY_EXCLUSIVE = 'Exclusive';
+    const GATEWAY_INCLUSIVE = 'Inclusive';
+    const GATEWAY_PARALLEL = 'Parallel';
+    const GATEWAY_COMPLEX = 'Complex';
 
     public function  __construct($xpdl=false) {
         if( $xpdl ) {
@@ -227,7 +261,7 @@ class Xpdl {
     }
 
     /**
-     * Retorno un array de id y nombre de procesos del paquete
+     * Retorno un array de id y nombre de procesos del paquete.
      * Recupera todos o solamente los especificados en $filters_id
      * @param array $filters_id Lista de id (xpdl) de procesos a filtrar
      *                          Si se omite recupera todos.
@@ -454,6 +488,13 @@ class Xpdl {
         return $participants;
     }
 
+    /**
+     * Retorna un array de actividades del proceso
+     * contiene [id, name, type, is_autocomplete]
+     * Si la actividad no tiene nombre fuerzo el id como tal
+     * @param string $process_id id Xpdl del proceso
+     * @return array
+     */
     public function getActivities( $process_id=false ) {
         $activities = array();
 
@@ -506,18 +547,53 @@ class Xpdl {
     }
 
     /**
+     * Obtengo el Id de un proceso a partir de su Id o nombre
+     * @param string $process Id o Nombre del proceso
+     * @return string id del proceso 
+     */
+    public function getProcessId($process) {
+
+        $nodeList = $this->xp->query( sprintf("/xpdl2:Package/xpdl2:WorkflowProcesses/xpdl2:WorkflowProcess[ @Id=\"%s\" ]", $process) );
+        if( $nodeList->length > 0 )
+            return $nodeList->item(0)->getAttribute('Id');
+
+        $nodeList = $this->xp->query( sprintf("/xpdl2:Package/xpdl2:WorkflowProcesses/xpdl2:WorkflowProcess[ @Name=\"%s\" ]", $process) );
+        if( $nodeList->length > 0 )
+            return $nodeList->item(0)->getAttribute('Id');
+
+        return false;
+    }
+
+    /**
+     * Obtengo el Nombre de un proceso a partir de su Id o Nombre
+     * @param string $process Id o Nombre del proceso
+     * @return string id del proceso
+     */
+    public function getProcessName($process) {
+
+        $nodeList = $this->xp->query( sprintf("/xpdl2:Package/xpdl2:WorkflowProcesses/xpdl2:WorkflowProcess[ @Id=\"%s\" ]", $process) );
+        if( $nodeList->length > 0 )
+            return $nodeList->item(0)->getAttribute('Name');
+
+        $nodeList = $this->xp->query( sprintf("/xpdl2:Package/xpdl2:WorkflowProcesses/xpdl2:WorkflowProcess[ @Name=\"%s\" ]", $process) );
+        if( $nodeList->length > 0 )
+            return $nodeList->item(0)->getAttribute('Name');
+
+        return false;
+    }
+
+    /**
      * Retorna el tipo de tarea/actividad estandarizada BPMN
      * @param $pNodeActivity
      * @return string
      */
     public function getActivityType($pNodeActivity) {
-        // Por defecto vacio para las no implementadas aun
         $activityType = '';
 
-        // Activity/Event/(StartEvent, IntermediateEvent, EndEvent)
+        // Activity/Event/XXXX
         $nodesEvent = $pNodeActivity->getElementsByTagName("Event");
         if( $nodesEvent->length > 0 ) {
-            $types = array( 'StartEvent', 'IntermediateEvent', 'EndEvent' );
+            $types = array( self::EVENT_START, self::EVENT_INTERMEDIATE, self::EVENT_END );
             foreach( $types as $type) {
                 $nodes = $nodesEvent->item(0)->getElementsByTagName($type);
                 if( $nodes->length > 0 ) {
@@ -527,14 +603,12 @@ class Xpdl {
             }
         }
 
-        // Activity/Implementation/Task/(TaskService, TaskReceive, TaskManual,
-        // TaskReference, TaskScript, TaskSend, TaskUser, TaskApplication)
+        // Activity/Implementation/Task/XXXXXX
         $nodesImpl = $pNodeActivity->getElementsByTagName("Implementation");
         if( $nodesImpl->length > 0 ) {
             $nodesTask = $nodesImpl->item(0)->getElementsByTagName("Task");
             if( $nodesTask->length > 0 ) {
-                $types = array( 'TaskService', 'TaskReceive', 'TaskManual', 'TaskReference',
-                        'TaskScript', 'TaskSend', 'TaskUser', 'TaskApplication' );
+                $types = array( self::TASK_MANUAL, self::TASK_SCRIPT, self::TASK_USER );
                 foreach( $types as $type) {
                     $nodes = $nodesTask->item(0)->getElementsByTagName($type);
                     if( $nodes->length > 0 ) {
@@ -543,6 +617,13 @@ class Xpdl {
                     }
                 }
             }
+        }
+
+        // Activity/Route/GatewayType/(TaskService, TaskReceive, TaskManual,
+        // TaskReference, TaskScript, TaskSend, TaskUser, TaskApplication)
+        $nodesImpl = $pNodeActivity->getElementsByTagName("Route");
+        if( $nodesImpl->length > 0 ) {
+            $activityType = $nodesImpl->item(0)->getAttribute("GatewayType");
         }
 
         return $activityType;
@@ -570,6 +651,44 @@ class Xpdl {
             return true;
         }
         return false;
+    }
+
+    public function getActivityName($processXpdlId, $activityXpdlId) {
+        $nodeList = $this->xp->query(
+            "/xpdl2:Package/xpdl2:WorkflowProcesses/xpdl2:WorkflowProcess[ @Id=\"".$processXpdlId."\"]".
+            "/xpdl2:Activities/xpdl2:Activity[ @Id=\"".$activityXpdlId."\" ]" );
+
+        return $nodeList->item(0)->getAttribute('Name');
+    }
+
+    /**
+     * Recupera un array de transiciones cuyo origen es la actividad $activity_id
+     * array compuesto por [To, type, condition, To_name]
+     * @param string $process_id Proceso id xpdl
+     * @param string $activity_id Actividad id xpdl
+     * @return array Transiciones
+     */
+    public function getTransitions($process_id, $activity_id) {
+
+        $transitions = array();
+
+        // Transiciones cuyo origen es la actividad actual
+        $nodeList = $this->getElementsByQuery(
+            "/xpdl2:Package/xpdl2:WorkflowProcesses/xpdl2:WorkflowProcess[ @Id=\"".$process_id."\"]".
+            "/xpdl2:Transitions/xpdl2:Transition[ @From=\"".$activity_id."\" ]" );
+
+        foreach ( $nodeList as $node ) {
+            $trn["to"] = $node->getAttribute("To");
+            $trn['condition'] = null;
+            $trn['type'] = null;
+            if( $node->getElementsByTagName("Condition")->length > 0 ) {
+                $trn['condition'] = $node->getElementsByTagName("Condition")->item(0)->textContent;
+                $trn['type'] = $node->getElementsByTagName("Condition")->item(0)->getAttribute('Type');
+            }
+            $trn["to_name"] = $this->getActivityName($process_id, $node->getAttribute("To"));
+            $transitions[$node->getAttribute("Id")] = $trn;
+        }
+        return $transitions;
     }
 
     public function getNextActivities($process_id, $activity_id) {
@@ -611,7 +730,7 @@ class Xpdl {
                     'Patron', self::EXTENDED_ACTIVITY, array($process_id, $activity_id));
 
         if( !$ymldef ) {
-            $ymldef="Foo: {}"; // Patron por defecto si no se especificó
+            return $patterns;
         }
 
         try {
@@ -620,11 +739,24 @@ class Xpdl {
             throw new sfException(sprintf('No se pudo leer yml de llamada a patron: %s', $e->getMessage()));
         }
 
-        // Quite el raiz Patron asi el 2do (Nombre) pasa a ser el 1ro.
+        // Quito el raiz (Patron) asi el 2do subnodo (Nombre) pasa a ser el 1ro.
         if( $pattern ) {
             $patterns[key($pattern)] = $pattern[key($pattern)];
         }
-        
+
+        // Regla de un solo patron
+        if (count($patterns) > 1) {
+            throw new sfException(sprintf('La actividad debe tener asociado solamente un patron'));
+        }
+
+        // Regla que exista el patron
+        if (count($patterns) == 1) {
+            $key = array_keys($patterns);
+            if( !UtilPattern::exists( $key[0] ) ) {
+                throw new sfException(sprintf('No existe el patron "%s" asociado a la actividad', $key[0]));
+            }
+        }
+
         return $patterns;
     }
 }
