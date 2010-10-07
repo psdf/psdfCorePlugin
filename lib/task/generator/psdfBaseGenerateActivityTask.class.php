@@ -57,7 +57,7 @@ abstract class psdfBaseGenerateActivityTask extends sfBaseTask {
     public function genScriptSetDatafield() {
         $script = '';
         foreach ($this->psdf_process_data['datafields'] as $key => $datafield) {
-            $script['set_df'].= sprintf( "%sthis->f->setDataField('%s', '%s');%s", chr(36), $key, $datafield["initialValue"], chr(10));
+            $script.= sprintf( "%sthis->f->setDataField('%s', '%s');%s", chr(36), $key, $datafield["initialValue"], chr(10));
         }
 
         return $script;
@@ -79,27 +79,43 @@ abstract class psdfBaseGenerateActivityTask extends sfBaseTask {
             // Transicion default, tomo la actividad destino (to)
             // Expresion a crear:
             //   $next = 'otraActividad';
-            if( $transition["type"]==Xpdl::TRANSITION_OTHERWISE or is_null($transition["type"]) ) {
-                $script.= sprintf("%snext = '%s';%s", chr(36), $transition["to_name"], chr(10));
+
+            if( $transition["type"]==psdfXpdl::TRANSITION_OTHERWISE or is_null($transition["type"]) ) {
+                $script.= sprintf("%snext = '%s';%s%s", chr(36), $transition["to_name"], chr(10), chr(10));
             }
 
             // Transicion condicional, debo resolver la regla
             // Expresion a crear:
             //   $rule = new psdfRule();
             //   $rule->setCondition('A>B')
-            //   $rule->addVariable('A', 4);
-            //   $rule->addVariable('B', 3);
+            //   $value = $f->getDatafield($param); ó $value = psdfContext::getAlgo();
+            //   $rule->setParameter($param, $value);
             //   $ret = $rule->validate();
             //   if( $ret ) $next = 'otraActividad';
-            if( $transition["type"]==Xpdl::TRANSITION_CONDITION ) {
-                $script.= sprintf("%snext = new psdfRule();%s", chr(36), chr(10));
-                $script.= sprintf("%srule->setCondition('%s');%s", chr(36), $transition['condition'], chr(10));
-                $script.= sprintf("%srule->addVariable('%s', '%s');%s", chr(36), 'varx', 'valuex', chr(10));
+
+            if( $transition["type"]==psdfXpdl::TRANSITION_CONDITION ) {
+                // Instancio regla y seteo la condicion
+                $script.= sprintf("%srule = new psdfRule();%s", chr(36), chr(10));
+                $script.= sprintf("%srule->setCondition(\"%s\");%s", chr(36), $transition['condition'], chr(10));
+                // Hago lo mismo a modo prueba para recorrer los parametros
+                $test = new psdfRule();
+                $test->setCondition($transition['condition']);
+                foreach( $test->getParameters() as $param=>$value) {
+                    if( array_key_exists($param, $this->psdf_process_data['datafields']) ) {
+                        $script.= sprintf("%svalue = %sthis->f->getDatafield('%s');%s", chr(36), chr(36), $param, chr(10));
+                    }
+                    elseif(method_exists('psdfContext', $param)) {
+                        $script.= sprintf("%svalue = psdfContext::%sparam();%s", chr(36), chr(36), chr(10));
+                    }
+                    else {
+                        throw new sfCommandException(sprintf("Error en regla '%s' el parametro '%s' no es un datafield ni un metodo de la clase psdfContext", $transition['condition'], $param));
+                    }
+                    $script.= sprintf("%srule->setParameter('%s', %svalue);%s", chr(36), $param, chr(36), chr(10));
+                }
                 $script.= sprintf("%sret = %srule->validate();%s", chr(36), chr(36), chr(10));
                 $script.= sprintf("if( %sret ) %snext = '%s';%s", chr(36), chr(36), $transition["to_name"], chr(10));
             }
         }
-        $this->log('::'.$script.'::');
         return $script;
     }
 
