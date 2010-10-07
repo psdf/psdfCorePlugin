@@ -63,9 +63,8 @@ Flow:
   columns:
     datafields:         { type: string }
     rel_estado:         { type: integer }
-    rel_proceso:        { type: integer }
+    xpdl_process_id:    { type: string(30) }
   relations:
-    Proceso:            { foreignAlias: Flow, local: rel_proceso, foreign: id, type: one, foreignType: many }
     Estado:             { foreignAlias: Flow1, local: rel_estado, foreign: id, type: one, foreignType: one }
 
 FlowDet:
