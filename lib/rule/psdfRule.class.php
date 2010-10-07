@@ -13,7 +13,7 @@
  *
  * @package    psdfCore
  * @subpackage rule
- * @author     Gustavo Earnshaw <contacto@proyecto-psdf.com.ar>
+ * @author     Gustavo Earnshaw <gustavoear@gmail.com>
  */
 class psdfRule {
 
@@ -25,6 +25,10 @@ class psdfRule {
     private $logicalOperator;   // Operadores logicos utilizados en la expresion polaca
     private $variable;
     private $stack;
+
+    const TYPE_STRING = 'string';
+    const TYPE_NUMERIC = 'numeric';
+    const TYPE_PARAMETER= 'param';
 
     /**
      * Constructor.
@@ -63,7 +67,7 @@ class psdfRule {
      * @param string $pType Tipo de variable (int, char, etc.) HOY TODAVIA NO TIENE USO
      * @param string $pValue Valor de la variable
      */
-    function addVariable($pName, $pType, $pValue) {
+    private function addVariable($pName, $pType, $pValue) {
         // Elimino comillas si es un string
         $pName = $this->parseMarks($pName);
         $pValue = $this->parseMarks($pValue);
@@ -92,7 +96,6 @@ class psdfRule {
     function convert($pExpr) {
         $pila = array();
 
-        // Limpio caracteres en expresion
         $expr = $this->prepare($pExpr);
 
         $i = 0;
@@ -175,10 +178,18 @@ class psdfRule {
 
                 // Extraigo variable
                 $varName = substr($expr, $i, $j - $i);
-                $varName = $this->parseMarks($varName);
-
+                
                 // La registro (por defecto el valor es el mismo nombre)
-                $this->addVariable($varName, '1', $varName);
+                if( $this->hasMarks($varName)) {
+                    $varName = $this->parseMarks($varName);
+                    $this->addVariable($varName, self::TYPE_STRING, $varName);
+                }
+                elseif(is_numeric($varName)) {
+                    $this->addVariable($varName, self::TYPE_NUMERIC, $varName);
+                }
+                else {
+                    $this->addVariable($varName, self::TYPE_PARAMETER, $varName);
+                }
 
                 // Concateno nueva expresion usando ya el Id generado (A, B, etc...)
                 $newExpr .= $this->getVarID($varName);
@@ -398,11 +409,25 @@ class psdfRule {
         return $this->expPolaca;
     }
 
+
+    /**
+     * Retorna verdadero si la expresion contiene comillas al inicio y final
+     * Ej. "algo" ==> true
+     * @param $expr
+     * @return boolean True si contiene comillas.
+     */
+    function hasMarks($expr) {
+        if (substr($expr, 0, 1) == '"' || substr($expr, 0, 1) == "'")
+            return true;
+        else
+            return false;
+    }
+
     /**
      * Quita de una expresion las comillas simples o dobles al inicio y final
      * Ej. "algo" ==> algo
-     * @param $expr
-     * @return unknown_type
+     * @param string $expr Expresion
+     * @return string Expresion sin las comillas
      */
     function parseMarks($expr) {
         if (substr($expr, 0, 1) == '"')
@@ -412,6 +437,37 @@ class psdfRule {
         return $expr;
     }
 
+    /**
+     * Setea un valor a un parametero de la condicion
+     * (solo aplicado a variables del tipo TYPE_PARAMETER
+     * @param string $param Nombre del parametro
+     * @param string $value Valor a aplicar al parametro
+     * @return boolean True si pudo aplicarse el valor
+     */
+    function setParameter($param, $value) {
+        if (array_key_exists($param, $this->variable)) {
+            if( $this->variable[$param]['type']==self::TYPE_PARAMETER ) {
+                $this->variable[$param]['value'] = $value;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Recupera las variables de tipo parametro con sus valores actuales
+     *
+     * @return array Lista de variables del tipo parametro (TYPE_PARAMETER) con sus valores
+     */
+    function getParameters() {
+        $ret = array();
+        foreach( $this->variable as $varname=>$vardef ) {
+            if( $vardef['type']==self::TYPE_PARAMETER ) {
+                $ret[$varname]=$vardef['value'];
+            }
+        }
+        return $ret;
+    }
 }
 
 ?>
