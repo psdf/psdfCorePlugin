@@ -4,7 +4,7 @@ connection: psdf
 Macro:
   tableName: psdfwf.macro
   columns:
-    nombre:             { type: string(30), notnull: true, unique: true }
+    nombre:             { type: string(60), notnull: true, unique: true }
     rel_proyecto:       { type: integer }
   relations:
     Proyecto:           { foreignAlias: macro, local: rel_proyecto, foreign: id, type: one, foreignType: many }
@@ -12,7 +12,7 @@ Macro:
 Paquete:
   tableName: psdfwf.paquete
   columns:
-    nombre:             { type: string(30), notnull: true, unique: true }
+    nombre:             { type: string(60), notnull: true, unique: true }
     xpdl:               { type: string }
     rel_macro:          { type: integer }
     rel_paquete:        { type: integer }
@@ -24,7 +24,7 @@ Paquete:
 Proceso:
   tableName: psdfwf.proceso
   columns:
-    nombre:             { type: string(30), notnull: true, unique: true }    
+    nombre:             { type: string(60), notnull: true, unique: true }
     rel_paquete:        { type: integer }
     imagen:             { type: string(30) }
     xpdl_id:            { type: string(30), notnull: true, unique: true }
