@@ -4,9 +4,9 @@ class psdfGenerateMacroTask extends sfBaseTask
 {
   public function configure()
   {
-    //$this->namespace = 'psdf';
-    //$this->name      = 'generate-macro';
-    //$this->briefDescription    = 'Genera un nuevo Macro PSDF';
+    $this->namespace = 'psdf';
+    $this->name      = 'generate-macro';
+    $this->briefDescription    = 'Genera un nuevo Macro PSDF';
 
     $this->addArgument('macro', sfCommandArgument::REQUIRED, 'Nombre del Macro');
   }

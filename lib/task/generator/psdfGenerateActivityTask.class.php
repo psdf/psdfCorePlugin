@@ -4,9 +4,9 @@ class psdfGenerateActivityTask extends psdfBaseGenerateActivityTask
 {
   public function configure()
   {
-    //$this->namespace = 'psdf';
-    //$this->name      = 'generate-activity';
-    //$this->briefDescription    = 'Genera una nueva tarea PSDF';
+    $this->namespace = 'psdf';
+    $this->name      = 'generate-activity';
+    $this->briefDescription    = 'Genera una nueva tarea PSDF';
 
     $this->addArgument('macro', sfCommandArgument::REQUIRED, 'Nombre del Macro');
     $this->addArgument('package', sfCommandArgument::REQUIRED, 'Nombre del Paquete');
