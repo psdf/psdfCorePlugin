@@ -100,7 +100,7 @@ public function processWorkspace( $files_xpdl=array(), $files_bom=array() ) {
     
     foreach( $files_xpdl as $file ) {
 
-        $xpdl = new Xpdl( $file );
+        $xpdl = new psdfXpdl( $file );
 
         // Recupero Id y Nombre del paquete
         $xpdlPackageId = $xpdl->getPackageId();

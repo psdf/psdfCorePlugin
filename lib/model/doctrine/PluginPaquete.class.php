@@ -184,6 +184,11 @@ public function build($ids=array())
     */
     public function buildProcess( $process, $datafields, $participants, $type_declarations )
     {
+    // Obtengo datafiels, participantes y tipos de datos del paquete
+    $datafields = $xpdl->getDataFields();
+    $participants = $xpdl->getParticipants();
+    $type_declarations = $xpdl->getTypeDeclarations();
+
         // Obtengo datafields y participantes (concateno a los del paquete)
         $datafields = array_merge( $datafields, $this->xpdl->getDataFields($process->getXpdlId()) );
         $participants = array_merge( $participants, $this->xpdl->getParticipants($process->getXpdlId()) );
@@ -355,7 +360,7 @@ public function build($ids=array())
 
 
 public function loadXpdl() {
-    $this->xpdl = new Xpdl($this->getXpdl());
+    $this->xpdl = new psdfXpdl($this->getXpdl());
 }
   
 /**

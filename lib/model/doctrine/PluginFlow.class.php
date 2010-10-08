@@ -8,6 +8,20 @@ abstract class PluginFlow extends BaseFlow
 	private $xml;
 	private $xmlIsLoaded;
 		
+  public function hasDataField($pDataFieldName)
+  {
+    if( !$this->xmlIsLoaded ) $this->loadDataFields();
+
+    $xp = new domxpath( $this->xml );
+    $nodeList = $xp->query( "/DataFields/DataField[ @Name = \"" . $pDataFieldName . "\"]" );
+
+    if( $nodeList->item(0) )
+    {
+    	return true;
+    }
+    return false;
+  }
+
   public function getDataField($pDataFieldName)
   {
     if( !$this->xmlIsLoaded ) $this->loadDataFields();  	
