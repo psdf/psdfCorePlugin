@@ -3,33 +3,41 @@ connection: psdf
 Organizacion:
   tableName: psdforg.organizacion
   columns:
-    nombre:             { type: string(30), notnull: true, unique: true }
+    nombre:             { type: string(60), notnull: true, unique: true }
 
 Unidadorg:
   tableName: psdforg.unidadorg
   columns:
-    nombre:             { type: string(30), notnull: true, unique: true }
+    nombre:             { type: string(60), notnull: true, unique: true }
     rel_organizacion:   { type: integer }
   relations:
     Organizacion:       { foreignAlias: Unidadorgs, local: rel_organizacion, foreign: id, type: one, foreignType: many }
 
+Puesto:
+  tableName: psdforg.puesto
+  columns:
+    nombre:             { type: string(60), notnull: true, unique: true }
+    rel_unidadorg:      { type: integer }
+  relations:
+    Unidadorg:          { foreignAlias: Puesto, local: rel_unidadorg, foreign: id, type: one, foreignType: many }
+
 Usuorg:
   tableName: psdforg.usuorg
   columns:
-    menu:             { type: string, notnull: false }
-    state:            { type: boolean, notnull: true, default: true }
-    rel_organizacion: { type: integer }
-    rel_usuario:      { type: integer }
-    rel_proceso:      { type: integer }
+    menu:               { type: string, notnull: false }
+    state:              { type: boolean, notnull: true, default: true }
+    rel_organizacion:   { type: integer }
+    rel_usuario:        { type: integer }
+    rel_proceso:        { type: integer }
   relations:
-    Organizacion:     { foreignAlias: Organizacion, local: rel_organizacion, foreign: id, type: one, foreignType: many }
-    sfGuardUser:      { foreignAlias: Usuario, local: rel_usuario, foreign: id, type: one, foreignType: many }
-    Proceso:          { foreignAlias: Proceso, local: rel_proceso, foreign: id, type: one, foreignType: many }
+    Organizacion:       { foreignAlias: Organizacion, local: rel_organizacion, foreign: id, type: one, foreignType: many }
+    sfGuardUser:        { foreignAlias: Usuario, local: rel_usuario, foreign: id, type: one, foreignType: many }
+    Proceso:            { foreignAlias: Proceso, local: rel_proceso, foreign: id, type: one, foreignType: many }
 
 Proyecto:
   tableName: psdforg.proyecto
   columns:
-    nombre:             { type: string(30), notnull: true, unique: true }
+    nombre:             { type: string(60), notnull: true, unique: true }
     rel_organizacion:   { type: integer }
   relations:
     Organizacion:       { foreignAlias: Proyectos, local: rel_organizacion, foreign: id, type: one, foreignType: many }
