@@ -15,13 +15,14 @@ generator:
       fields:
         rel_organizacion: { label: Organizacion }
         rel_paquete:    { label: Macro }
+        xpdl_id:          { label: ID Xpdl }
       list:
         sort:             [nombre, desc]
         display:          [macro, nombre, xpdl_id]
         table_method:     retrieveJoinMacro
         object_actions:
           _delete:        ~
-          xpdlexp:        { label: Exportar XPDL, action: xpdlexp }
+#          xpdlexp:        { label: Exportar XPDL, action: xpdlexp }
         actions:          {}
         batch_actions:    {}
           
