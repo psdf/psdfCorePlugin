@@ -72,6 +72,16 @@ class psdfXpdl {
         return true;
     }
 
+    /**
+     * Obtiene el macro del paquete xpdl
+     * El macro se determina por el directorio padre del archivo xpdl
+     * @return string Nombre del Macro
+     */
+    public function getMacroName() {
+        $parts = explode(DIRECTORY_SEPARATOR, $this->file);
+        return $parts[count($parts)-1];
+    }
+
     public function getPackageId() {
         return $this->xml
                 ->getElementsByTagNameNS($this->ns_xpdl2, 'Package')
