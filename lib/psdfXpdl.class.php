@@ -22,6 +22,8 @@ class psdfXpdl {
     var $file = false;
     var $ns_xpdl2 = "http://www.wfmc.org/2008/XPDL2.1";
 
+    const MACRO_DEFAULT = 'General';
+
     const EXTENDED_PACKAGE = '1';
     const EXTENDED_PROCESS = '2';
     const EXTENDED_ACTIVITY = '3';
@@ -53,10 +55,13 @@ class psdfXpdl {
 
     public function load( $xpdl ) {
         $this->xml = new DOMDocument();
+        $ret = false;
         // Determino si levanto de un archivo o un string
         if( file_exists($xpdl) ) {
-            $ret = $this->xml->load($xpdl);
-            $this->file = $xpdl; // Puede servirme mantenerlo
+            if( filesize($xpdl)>0 ) {
+                $ret = $this->xml->load($xpdl);
+                $this->file = $xpdl; // Puede servirme mantenerlo
+            }
         }
         else {
             $ret = $this->xml->loadXML($xpdl);
@@ -79,7 +84,12 @@ class psdfXpdl {
      */
     public function getMacroName() {
         $parts = explode(DIRECTORY_SEPARATOR, $this->file);
-        return $parts[count($parts)-1];
+        if( count($parts)>1 ) {
+            return $parts[count($parts)-2];
+        }
+        else {
+            return self::MACRO_DEFAULT;
+        }
     }
 
     public function getPackageId() {
