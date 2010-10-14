@@ -88,12 +88,14 @@ abstract class PluginProyecto extends BaseProyecto
   }
 
 /**
- * Procesa un workspace importando los archivos xpdls seleccionados.
+ * Procesa documentos xpdl, previamente seleccionados, generando y/o
+ * actualizando objetos Macro, Paquete, Proceso, Actividad y RolAbstracto.
  * Retorna un array con los archivos que no pudieron ser procesados.
+ *
  * @param array $files_xpdl Archivos Xpdls a Importar
  * @return array Archivos no procesados
  */
-public function processWorkspace( $files_xpdl=array(), $files_bom=array() ) {
+public function processXpdls( $files_xpdl=array() ) {
 
     // Para ir volcando los paquetes no procesados por alguna regla invalida
     $noimp = array();
@@ -106,16 +108,10 @@ public function processWorkspace( $files_xpdl=array(), $files_bom=array() ) {
         $xpdlPackageId = $xpdl->getPackageId();
         $xpdlPackageName = $xpdl->getPackageName();
 
-        // Recupero relaciones con Objeto Paquete y Macro del PSDF
-        // (si ya fué importado anteriormente sinó vendrá como nulo
-        $paquete_id = $xpdl->getPsdfPaquete();
-        $macro_id = $xpdl->getPsdfMacro();
-        $macro_name = $xpdl->getPsdfMacroName();
-        if( $macro_name==null ) {
-            $macro_name = $xpdl->determineMacroName();
-        }
+        // Recupero Macro
+        $macro_name = $xpdl->getMacroName();
 
-        // Todo el xpdl como un string para guardarlo
+        // Contenido del xpdl como un string para guardarlo
         $content = $xpdl->getContent();
 
         // Intento recuperar Macro y Paquete si ya estuviesen almacenados
@@ -126,32 +122,21 @@ public function processWorkspace( $files_xpdl=array(), $files_bom=array() ) {
 
         $err = array();
 
-        if( $pack ) {
-            if( $pack->getId() != $paquete_id ) {
-                $err['file'] = $file;
-                $err['error'] = 'Ya existe el Paquete '.$xpdlPackageName.' pero no coinciden los ids';
-            }
-        }
+        // Si no se cumple alguna regla generar:
+        // $err['file'] = $this->getNombre();
+        // $err['error'] = 'Mensaje del error';
 
         // CONTINUO SI SE PASARON TODAS LAS REGLAS
 
         if( count($err)==0 ) {
+
             // Creo el macro si aún no existe
             if( !$macro ) {
                 $macro = new Macro();
                 $macro->setNombre($macro_name);
                 $macro->setRelProyecto( $this->getId() );
-            }
-            else {
-                // Actualizo el nombre del Macro si fuese cambiado
-                if( $macro->getNombre()!=$macro_name ) {
-                    $macro->setNombre($macro_name);
-                }
-            }
-            if( $macro->isNew() or $macro->isModified() ) {
                 $macro->save();
             }
-
 
             // Creo el paquete si aún no existe y actualizo
             if( !$pack ) {
@@ -170,17 +155,16 @@ public function processWorkspace( $files_xpdl=array(), $files_bom=array() ) {
                     $pack->setNombre($xpdlPackageName);
                 }
             }
-            // Genero/Actualizo relaciones xpdl con psdf
-            $pack->setPsdfDataInXpdl( $pack->getId(), $macro->getId(), $macro->getNombre() );
 
+            // Guardo el paquete con los cambios
             if( $pack->isNew() or $pack->isModified() ) {
-                // Sincronizo procesos (seteos ids en xpdl y objetos)
-                $ret = $pack->syncProcess();
-                if( count($err)>0 ) {
-                    $noimp[] = array_merge($noimp, $ret);
-                }
-                // Guardo el paquete con los cambios
                 $pack->save();
+            }
+                
+            // Delego en el paquete la sincronizacion de los Procesos
+            $err = $pack->syncProcesses($xpdl);
+            if( count($err)>0 ) {
+                $noimp[] = array_merge($noimp, $err);
             }
         }
         else {

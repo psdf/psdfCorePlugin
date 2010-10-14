@@ -19,8 +19,7 @@ generator:
         object_actions:
           _edit:           ~
           _delete:         ~
-          exportar:        { label: Exportar a TIBCO, action: exportar }
-          importar:        { label: Importar desde TIBCO, action: importar }
+          sync:            { label: Importar desde repositorio, action: sync }
       filter:  ~
       form:    ~
       edit:    ~

@@ -384,22 +384,25 @@ public function isImplemented() {
     /**
      * Sincroniza los procesos del atributo xpdl con los objetos procesos.
      * Si no existe el objeto lo crea, si cambio por ej. el nombre lo actualiza
+     *
+     * @param Object Objeto instancia de la clase pdsfXpdl con el xpdl a procesar.
      * @param array $pIdXpdls Lista especifica de id (xpdl) de procesos a tratar,
      *                          sino procedo con todos.
      * @return array procesos no actualizados por algun error
      */
-    public function syncProcess( $pIdXpdls=array()) {
+    public function syncProcesses( $xpdl, $pIdXpdls=array()) {
 
-        if( !$this->xpdl ) {
-            $this->loadXpdl();
+        if( !$xpdl ) {
+            $err['file'] = $this->getNombre();
+            $err['error'] = 'No se ha instanciado el archivo xpdl para su tratamiento';
+            return $err;
         }
 
         // Para ir volcando los paquetes no procesados por alguna regla invalida
         $noimp = array();
 
-
-        // Obtengo informacion de procesos a sincronizar
-        $procs = $this->xpdl->getProcessArray($pIdXpdls);
+        // Obtengo procesos a sincronizar
+        $procs = $xpdl->getProcessArray($pIdXpdls);
 
         // Procedo con cada uno
         foreach( $procs as $pr ) {
@@ -410,12 +413,9 @@ public function isImplemented() {
             
             $err = array();
 
-            if( $proc ) {
-                if( $proc->getId() != $pr['psdf_id'] ) {
-                    $err['file'] = $this->getNombre(); // Uso el nombre del paquete
-                    $err['error'] = 'Ya existe el Proceso '.$pr['name'].' pero no coinciden los ids';
-                }
-            }
+            // Si no se cumple alguna regla generar
+            // $err['file'] = $this->getNombre();
+            // $err['error'] = 'Mensaje del error';
 
             // CONTINUO SI SE PASARON TODAS LAS REGLAS
 
@@ -427,7 +427,6 @@ public function isImplemented() {
                     $proc->setRelPaquete($this->getId());
                     $proc->setXpdlId($pr['id']);
                     $proc->save();
-                    $this->setPsdfProcessDataInXpdl($pr['id'], $proc->getId());
                 }
                 else {
                     if( $proc->getNombre()!=$pr['name'] ) {
@@ -443,29 +442,6 @@ public function isImplemented() {
             }
         }
         return $noimp;
-    }
-
-    public function setPsdfDataInXpdl($paquete, $macro, $macro_name) {
-        if( !$this->xpdl ) {
-            $this->loadXpdl();
-        }
-
-        $this->xpdl->setPsdfPaquete($paquete);
-        $this->xpdl->setPsdfMacro($macro);
-        $this->xpdl->setPsdfMacroName($macro_name);
-        // Actualizo el atributo xpdl con los cambios
-        $this->setXpdl( $this->xpdl->getContent() );
-    }
-
-    public function setPsdfProcessDataInXpdl($process_id, $proceso_id) {
-        if( !$this->xpdl ) {
-            $this->loadXpdl();
-        }
-
-        $this->xpdl->setPsdfProceso($process_id, $proceso_id);
-        // Actualizo el atributo xpdl con los cambios
-        $this->setXpdl( $this->xpdl->getContent() );
-
     }
 
     public function parseImplementationName() {

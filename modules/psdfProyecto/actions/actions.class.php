@@ -116,10 +116,53 @@ class psdfProyectoActions extends autoPsdfProyectoActions
         $proyecto = Doctrine::getTable('Proyecto')->find($id);
 
         if( $proyecto ) {
-            $this->error = $proyecto->processWorkspace($files);
+            $this->error = $proyecto->processXpdls($files);
         }
 
         if( count($this->error)>0 )
             return sfView::ERROR;
+    }
+
+    public function executeSync(sfWebRequest $request) {
+
+        // Preparo el id y name del proyecto para la proxima accion
+        $this->proyecto=array();
+        $this->proyecto['id'] = $request->getParameter('id');
+        $proyecto = Doctrine::getTable('Proyecto')->find($request->getParameter('id'));
+        $this->proyecto['name'] = $proyecto->getNombre();
+
+        // Recupero en un array la lista de documentos xpdl
+        $finder = sfFinder::type('file')->name('*.xpdl');
+        $finder->ignore_version_control(true);
+        $files = $finder->in(sfConfig::get('psdf_xpdl_dir'));
+
+        // Armo otro array con informacion de los xpdl
+        foreach( $files as $file) {
+            $xpdl = new psdfXpdl();
+            $ret = $xpdl->load($file);
+
+            $new['nombre'] = $file;
+            $new['macro'] = $ret?$xpdl->getMacroName():'';
+            $new['package'] = $ret?$xpdl->getPackageName():'';
+            $new['fecha'] = filemtime($file);
+            $this->proyecto['files'][] = $new;
+        }
+        // Ordeno el array por la fecha de modificacion
+        usort($this->proyecto['files'], array('self', 'comparar'));
+    }
+
+    /**
+     * Para utilizar en el ordenamiento del array
+     * @param <type> $x
+     * @param <type> $y
+     * @return <type>
+     */
+    public function comparar($x, $y) {
+        if ($x['fecha'] == $y['fecha'])
+            return 0;
+        else if ($x['fecha'] > $y['fecha'])
+            return -1;
+        else
+            return 1;
     }
 }
